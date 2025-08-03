@@ -16,7 +16,7 @@ export function middleware(req: NextRequest) {
   }
 
   if (PUBLIC_PATHS.some(p => pathname.startsWith(p))) {
-    if (pathname === '/logout') {
+    if (pathname.startsWith('/logout')) {
       // Always allow /logout to be visited
       return NextResponse.next();
     }
