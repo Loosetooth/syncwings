@@ -9,6 +9,15 @@ function getSyncthingPort(username: string): number | null {
   return 8384 + user.index;
 }
 
+/**
+ * Handles the proxying of Syncthing requests.
+ * It retrieves the session user from the request, determines the Syncthing port,
+ * and proxies the request to the appropriate Syncthing instance.
+ * It supports GET, POST, PUT, PATCH, DELETE, OPTIONS, and HEAD methods.
+ * It also handles the path parameters to allow for catch-all routing.
+ * If the user is not authenticated, it redirects to the login page.
+ * Trailing slashes are manually removed because Next.js only supports either always or never having them.
+ */
 async function handleProxy(req: NextRequest, { params }: { params: { path?: string[] } }) {
   // Get session cookie
   const cookie = req.headers.get('cookie');
