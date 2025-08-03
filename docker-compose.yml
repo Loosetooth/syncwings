@@ -1,0 +1,16 @@
+
+services:
+  syncthing-multi-user:
+    image: syncthing-multi-user:latest
+    environment:
+      - DATA_DIR=/data
+    # The ./data directory must be created and owned by the same UID:GID as set below
+    volumes:
+      - ./data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "3000:3000"
+    # Set to UID:GID where GID matches the docker group on your host
+    user: "1000:131"
+    restart: unless-stopped
+    network_mode: host
