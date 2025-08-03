@@ -18,7 +18,7 @@ function getSyncthingPort(username: string): number | null {
  * If the user is not authenticated, it redirects to the login page.
  * Trailing slashes are manually removed because Next.js only supports either always or never having them.
  */
-async function handleProxy(req: NextRequest, { params }: { params: { path?: string[] } }) {
+async function handleProxy(req: NextRequest): Promise<Response> {
   // Get session cookie
   const cookie = req.headers.get('cookie');
   let username = '';
@@ -49,7 +49,7 @@ async function handleProxy(req: NextRequest, { params }: { params: { path?: stri
   }
   const targetUrl = `http://127.0.0.1:${port}${subPath}${url.search}`;
 
-  return new Promise((resolve) => {
+  return new Promise<Response>((resolve) => {
     // Clone and add custom header
     const headers = Object.fromEntries(req.headers.entries());
     headers['host'] = req.headers.get('host') || '';
