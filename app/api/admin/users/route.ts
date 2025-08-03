@@ -31,8 +31,7 @@ export async function DELETE(req: NextRequest) {
   if (username === user.username) return NextResponse.json({ error: 'Cannot remove yourself' }, { status: 400 });
   try {
     // Remove user implementation
-    const users = userStore.readUsers().filter(u => u.username !== username);
-    userStore.writeUsers(users);
+    userStore.removeUser(username);
     return NextResponse.json({ ok: true });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 400 });

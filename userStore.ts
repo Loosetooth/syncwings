@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import bcrypt from 'bcryptjs';
+import { SyncthingInstanceService } from './syncthingInstanceService';
 
 export interface User {
   username: string;
@@ -16,12 +17,14 @@ export class UserStore {
   private configDir: string;
   private usersFile: string;
   private userMapCache: Map<string, User> | null = null;
-  private latestIndex: number = 1;
+  private latestIndex: number = 2;
+  private syncthingService: SyncthingInstanceService;
 
-  constructor(configDir?: string) {
+  constructor(configDir?: string, syncthingService?: SyncthingInstanceService) {
     this.configDir = configDir || process.env.CONFIG_DIR || process.cwd();
     this.usersFile = path.join(this.configDir, 'users.json');
     this.loadLatestIndex();
+    this.syncthingService = syncthingService || new SyncthingInstanceService(this.configDir);
   }
 
   private loadLatestIndex() {
@@ -77,6 +80,18 @@ export class UserStore {
     const index = ++this.latestIndex;
     userMap.set(username, { username, passwordHash, syncthingInstance: username, isAdmin: isFirstUser || isAdmin, index });
     this.writeUserMap(userMap);
+    // --- Compose file and instance management ---
+    this.syncthingService.ensureUserDirs(username);
+    this.syncthingService.writeComposeFile(username, index);
+    this.syncthingService.startComposeInstance(username);
+  }
+
+  removeUser(username: string): void {
+    const userMap = this.getUserMap();
+    if (!userMap.has(username)) throw new Error('User not found');
+    userMap.delete(username);
+    this.writeUserMap(userMap);
+    this.syncthingService.removeInstanceAndData(username);
   }
 
   promoteToAdmin(username: string): void {
@@ -111,6 +126,37 @@ export class UserStore {
     this.latestIndex = users.reduce((max, u) => Math.max(max, u.index || 0), 0);
     this.writeUserMap(userMap);
   }
+
+  startAllInstances(): void {
+    const users = this.readUsers();
+    for (const user of users) {
+      this.syncthingService.ensureUserDirs(user.username);
+      this.syncthingService.writeComposeFile(user.username, user.index);
+      this.syncthingService.startComposeInstance(user.username);
+    }
+  }
+
+  stopAllInstances(): void {
+    const users = this.readUsers();
+    for (const user of users) {
+      this.syncthingService.stopComposeInstance(user.username);
+    }
+  }
 }
 
 export const userStore = new UserStore();
+
+// Start all instances on module load (when Next.js starts)
+userStore.startAllInstances();
+
+// Stop all instances on process exit
+if (typeof process !== 'undefined' && process.on) {
+  process.on('SIGINT', () => {
+    userStore.stopAllInstances();
+    process.exit(0);
+  });
+  process.on('SIGTERM', () => {
+    userStore.stopAllInstances();
+    process.exit(0);
+  });
+}
