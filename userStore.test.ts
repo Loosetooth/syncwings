@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
 import fs from 'fs';
 import path from 'path';
-import { UserStore, User } from './userStore';
+import { UserStore } from './userStore';
 
 const TEST_CONFIG_DIR = path.join(process.cwd(), '__test_config');
 let store: UserStore;

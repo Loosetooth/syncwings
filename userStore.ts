@@ -2,13 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import bcrypt from 'bcryptjs';
-
-export interface User {
-  username: string;
-  passwordHash: string;
-  syncthingInstance: string;
-  isAdmin?: boolean;
-}
+import { User } from './user';
 
 export class UserStore {
   private configDir: string;
