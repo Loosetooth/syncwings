@@ -7,13 +7,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "next": "^15.4.5",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
@@ -21,6 +23,7 @@
   "devDependencies": {
     "@types/node": "24.1.0",
     "@types/react": "19.1.9",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "vitest": "^3.2.4"
   }
 }
