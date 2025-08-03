@@ -1,21 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { makeSessionCookie } from '../../../cookieHelpers';
+import { getSessionUser } from '../../../sessionHelpers';
 
 export async function GET(req: NextRequest) {
-  const cookie = req.headers.get('cookie');
-  let username = '';
-  if (cookie) {
-    const match = cookie.split(';').map(c => c.trim()).find(c => c.startsWith('session='));
-    if (match) {
-      username = decodeURIComponent(match.split('=')[1]);
-    }
-  }
-  if (!username) {
+  const user = await getSessionUser(req);
+  if (!user) {
     return NextResponse.json({ loggedIn: false });
   }
   // Refresh the session cookie expiry
-  const newCookie = makeSessionCookie(username);
-  const res = NextResponse.json({ loggedIn: true, username });
+  const newCookie = makeSessionCookie(user.username);
+  const res = NextResponse.json({ loggedIn: true, username: user.username, isAdmin: user.isAdmin });
   res.headers.set('Set-Cookie', newCookie);
   return res;
 }

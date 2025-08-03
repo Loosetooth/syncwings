@@ -8,7 +8,6 @@ export class UserStore {
   private configDir: string;
   private usersFile: string;
   private userMapCache: Map<string, User> | null = null;
-
   constructor(configDir?: string) {
     this.configDir = configDir || process.env.CONFIG_DIR || process.cwd();
     this.usersFile = path.join(this.configDir, 'users.json');
@@ -82,3 +81,5 @@ export class UserStore {
     this.writeUserMap(userMap);
   }
 }
+
+export const userStore = new UserStore();
