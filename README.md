@@ -8,12 +8,12 @@ This project provides a simple web interface and backend for managing multiple S
 - Admin can add or remove users
 
 ## Environment Variable
-- `CONFIG_DIR` (optional):
-  - Set this to specify a custom directory for storing the `users.json` file (user database).
+- `DATA_DIR` (optional):
+  - Set this to specify a custom directory for storing the `users.json` file (user database) and user's syncthing data.
   - If not set, the project root directory is used by default.
   - Example usage:
     ```sh
-    CONFIG_DIR=/opt/syncthing-multiuser-config npm start
+    DATA_DIR=/opt/syncthing-multiuser-data npm start
     ```
 
 ## Usage

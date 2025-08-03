@@ -21,7 +21,7 @@ export class UserStore {
   private syncthingService: SyncthingInstanceService;
 
   constructor(configDir?: string, syncthingService?: SyncthingInstanceService) {
-    this.configDir = configDir || process.env.CONFIG_DIR || process.cwd();
+    this.configDir = configDir || process.env.DATA_DIR || process.cwd();
     this.usersFile = path.join(this.configDir, 'users.json');
     this.loadLatestIndex();
     this.syncthingService = syncthingService || new SyncthingInstanceService(this.configDir);

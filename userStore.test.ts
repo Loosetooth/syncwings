@@ -4,24 +4,24 @@ import path from 'path';
 import { UserStore } from './userStore';
 import { SyncthingInstanceService } from './syncthingInstanceService';
 
-const TEST_CONFIG_DIR = path.join(process.cwd(), '__test_config');
+const TEST_DATA_DIR = path.join(process.cwd(), '__test_config');
 let store: UserStore;
 
 function cleanTestConfig() {
-  if (fs.existsSync(TEST_CONFIG_DIR)) fs.rmSync(TEST_CONFIG_DIR, { recursive: true, force: true });
+  if (fs.existsSync(TEST_DATA_DIR)) fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true });
   if (store) store.resetUserCache();
 }
 
 describe('UserStore', () => {
   beforeAll(() => {
-    const syncthingService = new SyncthingInstanceService(TEST_CONFIG_DIR, false);
-    store = new UserStore(TEST_CONFIG_DIR, syncthingService);
+    const syncthingService = new SyncthingInstanceService(TEST_DATA_DIR, false);
+    store = new UserStore(TEST_DATA_DIR, syncthingService);
     cleanTestConfig();
   })
 
   beforeEach(() => {
     cleanTestConfig();
-    fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
+    fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
     store.reloadUsersFromDisk();
   })
 
