@@ -32,7 +32,7 @@ export class SyncthingInstanceService {
     const tcpPort = 22000 + index;
     const udpPort = 22000 + index;
     const discoveryPort = 21027 + index;
-    return `version: '3.8'
+    return `
 services:
   syncthing:
     image: linuxserver/syncthing:1.30.0
