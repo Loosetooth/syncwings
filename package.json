@@ -15,14 +15,23 @@
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
+    "@radix-ui/react-slot": "^1.2.3",
+    "@tailwindcss/postcss": "^4.1.11",
     "bcryptjs": "^3.0.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.536.0",
     "next": "^15.4.5",
+    "postcss": "^8.5.6",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
     "@types/node": "24.1.0",
     "@types/react": "19.1.9",
+    "tw-animate-css": "^1.3.6",
     "typescript": "5.9.2",
     "vitest": "^3.2.4"
   }
