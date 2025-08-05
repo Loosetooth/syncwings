@@ -7,12 +7,11 @@ export default function LogoutPage() {
   const router = useRouter();
   useEffect(() => {
     fetch("/api/logout", { method: "POST" }).then(() => {
-      router.replace("/login");
+      router.replace("/");
     });
   }, [router]);
   return (
     <>
-      <Navbar loggedIn={false} />
       <div className="flex items-center justify-center min-h-[60vh]">
         <span className="text-gray-600 text-lg">Logging out...</span>
       </div>

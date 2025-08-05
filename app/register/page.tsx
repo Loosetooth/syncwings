@@ -35,7 +35,7 @@ export default function RegisterPage() {
 
   return (
     <>
-      <Navbar loggedIn={false} />
+      <Navbar />
       <div className="flex justify-center items-center min-h-[60vh]">
         <Card className="w-full max-w-md shadow-lg">
           <CardHeader>

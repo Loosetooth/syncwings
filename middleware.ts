@@ -15,19 +15,7 @@ export function middleware(req: NextRequest) {
     }
   }
 
-  if (PUBLIC_PATHS.some(p => pathname.startsWith(p))) {
-    if (pathname.startsWith('/logout')) {
-      // Always allow /logout to be visited
-      return NextResponse.next();
-    }
-    if(pathname.startsWith('/api/')) {
-      // Allow API routes to be accessed without authentication
-      return NextResponse.next();
-    }
-    // If the user is already authenticated, redirect to /syncthing page
-    if (username) {
-      return NextResponse.redirect(new URL('/syncthing', req.url));
-    }
+  if (pathname === '/' || PUBLIC_PATHS.some(p => pathname.startsWith(p))) {
     return NextResponse.next();
   }
   if (!username) {

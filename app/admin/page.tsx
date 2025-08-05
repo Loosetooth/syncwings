@@ -1,7 +1,12 @@
 "use client";
+
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { User } from '../../user';
+import Navbar from '../components/Navbar';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 export default function AdminPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -16,7 +21,7 @@ export default function AdminPage() {
       .then(res => res.json())
       .then(data => {
         if (!data.loggedIn) router.replace('/login');
-        else if (!data.isAdmin) router.replace('/syncthing');
+        else if (!data.isAdmin) router.replace('/unauthorized');
         else fetchUsers();
       });
   }, [router]);
@@ -60,34 +65,76 @@ export default function AdminPage() {
     else setError('Failed to promote user');
   }
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <>
+      <Navbar />
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <span className="text-gray-600 text-lg">Loading...</span>
+      </div>
+    </>
+  );
 
   return (
-    <div style={{ maxWidth: 600, margin: '2rem auto' }}>
-      <h2>Admin Panel</h2>
-      <form onSubmit={handleAddUser} style={{ marginBottom: 20 }}>
-        <input type="text" placeholder="New username" value={newUser} onChange={e => setNewUser(e.target.value)} required />
-        <input type="text" placeholder="Password" value={newPass} onChange={e => setNewPass(e.target.value)} required />
-        <button type="submit">Add User</button>
-      </form>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr><th>Username</th><th>Admin</th><th>Actions</th></tr>
-        </thead>
-        <tbody>
-          {users.map(u => (
-            <tr key={u.username}>
-              <td>{u.username}</td>
-              <td>{u.isAdmin ? 'Yes' : 'No'}</td>
-              <td>
-                <button onClick={() => handleRemoveUser(u.username)}>Remove</button>
-                {!u.isAdmin && <button onClick={() => handlePromote(u.username)}>Promote to Admin</button>}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <>
+      <Navbar />
+      <main className="max-w-2xl mx-auto px-4 py-10">
+        <Card className="w-full shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>Admin Panel</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleAddUser} className="flex flex-col md:flex-row gap-4 mb-6">
+              <Input
+                type="text"
+                placeholder="New username"
+                value={newUser}
+                onChange={e => setNewUser(e.target.value)}
+                required
+                className="flex-1"
+              />
+              <Input
+                type="text"
+                placeholder="Password"
+                value={newPass}
+                onChange={e => setNewPass(e.target.value)}
+                required
+                className="flex-1"
+              />
+              <Button type="submit" className="min-w-[120px] cursor-pointer">Add User</Button>
+            </form>
+            {error && <div className="text-red-600 text-sm text-center mb-4">{error}</div>}
+            <div className="overflow-x-auto">
+              <table className="w-full border rounded-lg overflow-hidden text-sm">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="py-2 px-3 text-left">Username</th>
+                    <th className="py-2 px-3 text-left">Admin</th>
+                    <th className="py-2 px-3 text-left">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map(u => (
+                    <tr key={u.username} className="border-t">
+                      <td className="py-2 px-3">{u.username}</td>
+                      <td className="py-2 px-3">{u.isAdmin ? 'Yes' : 'No'}</td>
+                      <td className="py-2 px-3 flex gap-2">
+                        <Button variant="destructive" size="sm" className="cursor-pointer" onClick={() => handleRemoveUser(u.username)}>
+                          Remove
+                        </Button>
+                        {!u.isAdmin && (
+                          <Button variant="secondary" size="sm" className="cursor-pointer" onClick={() => handlePromote(u.username)}>
+                            Promote to Admin
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      </main>
+    </>
   );
 }

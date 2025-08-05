@@ -1,24 +1,77 @@
 "use client";
+
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "./useSession";
+import { useState, useEffect, useRef } from "react";
 
-export default function Navbar({ loggedIn }: { loggedIn: boolean }) {
+// DropdownMenu component to close on outside click
+function DropdownMenu({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        onClose();
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [onClose]);
+  return (
+    <div ref={ref} className="absolute right-4 top-14 z-50 bg-white border rounded shadow-md flex flex-col w-48 md:hidden animate-fade-in">
+      {children}
+    </div>
+  );
+}
+
+export default function Navbar() {
   const pathname = usePathname();
+  const { loggedIn, loading } = useSession();
+
   // Hide navbar on /syncthing route
   if (pathname.startsWith("/syncthing")) return null;
 
+  const [menuOpen, setMenuOpen] = useState(false);
+
+
   return (
-    <nav className="bg-white border-b shadow flex items-center px-4 py-2 mb-8">
+    <nav className="bg-white border-b shadow flex items-center px-4 py-2 mb-8 relative">
       <div className="flex-1">
         <Link href="/" className="font-bold text-lg text-gray-800 hover:text-primary">Syncthing Multi-User</Link>
       </div>
-      <div className="flex gap-4 items-center">
-        {!loggedIn && <Link href="/login" className="text-gray-700 hover:text-primary">Login</Link>}
-        {!loggedIn && <Link href="/register" className="text-gray-700 hover:text-primary">Register</Link>}
-        {loggedIn && <Link href="/syncthing" className="text-gray-700 hover:text-primary">My Syncthing</Link>}
-        {loggedIn && <Link href="/logout" className="text-gray-700 hover:text-primary">Logout</Link>}
-        {loggedIn && <Link href="/admin" className="text-gray-700 hover:text-primary">Admin</Link>}
+      {/* Hamburger for small screens */}
+      <button
+        className="md:hidden ml-2 p-2 rounded hover:bg-gray-100 focus:outline-none cursor-pointer"
+        aria-label="Open menu"
+        onClick={() => setMenuOpen((v) => !v)}
+      >
+        <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      {/* Inline links for md+ screens */}
+      <div className="hidden md:flex gap-4 items-center">
+        {loading ? null : (
+          <>
+            {!loggedIn && <Link href="/login" className="text-gray-700 hover:text-primary">Log in</Link>}
+            {!loggedIn && <Link href="/register" className="text-gray-700 hover:text-primary">Register</Link>}
+            {loggedIn && <Link href="/syncthing" className="text-gray-700 hover:text-primary">My Syncthing</Link>}
+            {loggedIn && <Link href="/logout" className="text-gray-700 hover:text-primary">Log out</Link>}
+            {loggedIn && <Link href="/admin" className="text-gray-700 hover:text-primary">Admin</Link>}
+          </>
+        )}
       </div>
+      {/* Dropdown for small screens */}
+      {menuOpen && !loading && (
+        <DropdownMenu onClose={() => setMenuOpen(false)}>
+          {!loggedIn && <Link href="/login" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>Log in</Link>}
+          {!loggedIn && <Link href="/register" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>Register</Link>}
+          {loggedIn && <Link href="/syncthing" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>My Syncthing</Link>}
+          {loggedIn && <Link href="/logout" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>Log out</Link>}
+          {loggedIn && <Link href="/admin" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>Admin</Link>}
+        </DropdownMenu>
+      )}
     </nav>
   );
 }

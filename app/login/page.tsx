@@ -22,7 +22,7 @@ export default function LoginPage() {
       body: JSON.stringify({ username, password }),
     });
     if (res.ok) {
-      router.replace("/syncthing");
+      router.replace("/");
     } else {
       const data = await res.json();
       setError(data.error || "Login failed");
@@ -31,7 +31,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <Navbar loggedIn={false} />
+      <Navbar />
       <div className="flex justify-center items-center min-h-[60vh]">
         <Card className="w-full max-w-md shadow-lg">
           <CardHeader>
