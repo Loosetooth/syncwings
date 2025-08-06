@@ -72,8 +72,11 @@ async function handleProxy(req: NextRequest): Promise<Response> {
         resolve(res);
       });
     });
-    proxyReq.on('error', () => {
-      const errorMsg = encodeURIComponent('Proxy Error. Is the syncthing instance started? Is there incorrect data saved in the session cookie?');
+    proxyReq.on('error', (err: Error) => {
+      console.error('Proxy request error:', err);
+      const errorMsg = encodeURIComponent(`Proxy Error.
+        ${err.message}
+        Is the syncthing instance started? Is there incorrect data saved in the session cookie?`);
       resolve(new Response(null, {
         status: 302,
         headers: { Location: `/error?msg=${errorMsg}` },
