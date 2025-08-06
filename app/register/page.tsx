@@ -107,7 +107,7 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword2(e.target.value)}
                 required
               />
-              <Button type="submit" className="w-full">Register</Button>
+              <Button type="submit" className="w-full hover:cursor-pointer">Register</Button>
               {error && (
                 <div className="text-red-600 text-sm text-center">{error}</div>
               )}
