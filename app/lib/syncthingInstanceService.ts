@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
+import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 
 /**
  * Service to manage Syncthing instances for users.
@@ -17,6 +18,9 @@ export class SyncthingInstanceService {
 
   getUserDir(username: string) {
     return path.join(this.baseDir, 'users', username);
+  }
+  getConfigXmlPath(username: string) {
+    return path.join(this.getConfigDir(username), 'config.xml');
   }
   getComposeFile(username: string) {
     return path.join(this.getUserDir(username), 'docker-compose.yaml');
@@ -48,11 +52,45 @@ services:
       - ${userExternalDir}/data:/data
     ports:
       - ${webPort}:8384
-      - ${tcpPort}:22000/tcp
-      - ${udpPort}:22000/udp
-      - ${discoveryPort}:21027/udp
+      - ${tcpPort}:${tcpPort}/tcp
+      - ${udpPort}:${udpPort}/udp
+      - ${discoveryPort}:${discoveryPort}/udp
     restart: unless-stopped
 `;
+  }
+  updateSyncthingConfig(username: string, index: number) {
+    const tcpPort = 22000 + index;
+    const discoveryPort = 21027 + index;
+
+    const configPath = this.getConfigXmlPath(username);
+
+    const xml = fs.readFileSync(configPath, 'utf8');
+    const parser = new XMLParser({ ignoreAttributes: false });
+    const builder = new XMLBuilder({ ignoreAttributes: false, format: true });
+    const config = parser.parse(xml);
+
+    // Update listenAddress (each as a separate element)
+    const listenAddresses = [
+      `tcp://0.0.0.0:${tcpPort}`,
+      `quic://0.0.0.0:${tcpPort}`,
+      'dynamic+https://relays.syncthing.net/endpoint'
+    ];
+    config.configuration.options.listenAddress = listenAddresses;
+
+    // Update localAnnouncePort and localAnnounceMCAddr
+    config.configuration.options.localAnnouncePort = discoveryPort;
+    config.configuration.options.localAnnounceMCAddr = `[ff12::8384]:${discoveryPort}`;
+
+    // Write back
+    const newXml = builder.build(config);
+    if (xml === newXml) {
+      console.log(`No changes to config.xml for ${username}`);
+      return { updated: false };
+    } else {
+      fs.writeFileSync(configPath, newXml, 'utf8');
+      console.log(`Updated config.xml for ${username}`);
+      return { updated: true };
+    }
   }
   ensureUserDirs(username: string) {
     fs.mkdirSync(this.getUserDir(username), { recursive: true });
@@ -91,5 +129,22 @@ services:
   removeInstanceAndData(username: string) {
     this.stopComposeInstance(username);
     this.removeUserDirs(username);
+  }
+  startInstance(username: string, index: number) {
+    this.ensureUserDirs(username);
+    this.writeComposeFile(username, index);
+    this.startComposeInstance(username);
+    const { updated } = this.updateSyncthingConfig(username, index);
+    if (updated) {
+      console.log(`Syncthing config updated for ${username}. Restarting instance...`);
+      this.stopComposeInstance(username);
+      // Add a short delay to ensure container is fully stopped
+      setTimeout(() => {
+        this.startComposeInstance(username);
+      }, 2000);
+    }
+  }
+  stopInstance(username: string) {
+    this.stopComposeInstance(username);
   }
 }

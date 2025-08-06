@@ -37,7 +37,7 @@ export class UserStore {
         // Legacy: just an array of users
         this.latestIndex = data.length;
       }
-    } catch {}
+    } catch { }
   }
 
   resetUserCache() {
@@ -81,9 +81,7 @@ export class UserStore {
     userMap.set(username, { username, passwordHash, syncthingInstance: username, isAdmin: isFirstUser || isAdmin, index });
     this.writeUserMap(userMap);
     // --- Compose file and instance management ---
-    this.syncthingService.ensureUserDirs(username);
-    this.syncthingService.writeComposeFile(username, index);
-    this.syncthingService.startComposeInstance(username);
+    this.syncthingService.startInstance(username, index);
   }
 
   removeUser(username: string): void {
@@ -130,9 +128,7 @@ export class UserStore {
   startAllInstances(): void {
     const users = this.readUsers();
     for (const user of users) {
-      this.syncthingService.ensureUserDirs(user.username);
-      this.syncthingService.writeComposeFile(user.username, user.index);
-      this.syncthingService.startComposeInstance(user.username);
+      this.syncthingService.startInstance(user.username, user.index);
     }
   }
 
