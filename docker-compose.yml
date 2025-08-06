@@ -1,7 +1,7 @@
 
 services:
   syncthing-multi-user:
-    image: syncthing-multi-user:latest
+    image: ghcr.io/loosetooth/syncthing-multi-user:latest
     environment:
       - DATA_DIR=/data
     # The ./data directory must be created and owned by the same UID:GID as set below
