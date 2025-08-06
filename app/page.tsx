@@ -30,7 +30,7 @@ export default function Page() {
       <main className="max-w-2xl mx-auto px-4 py-10">
         <h1 className="text-3xl font-bold mb-4 text-center">Syncthing Multi-User Manager</h1>
         <p className="text-lg text-gray-700 mb-8 text-center">
-          This app provides a simple web interface for managing multiple Syncthing instances, one per user. Each user gets their own isolated Syncthing container, managed via Docker Compose. Register, log in, and manage your own secure file sync instance.
+          This app provides a simple web interface for managing multiple Syncthing instances, one per user. Each user gets their own isolated Syncthing container, managed via Docker Compose. Register, log in, and manage your own file sync instance.
         </p>
 
         <div className="flex flex-col gap-6 mb-10">
@@ -53,7 +53,7 @@ export default function Page() {
             </Link>
           )}
           {/* Show register button only if registration is open (no users yet) */}
-          {registrationOpen === true && (
+          {registrationOpen && (
             <Link href="/register" className="block">
               <button className="w-full py-4 px-6 rounded-lg bg-secondary text-gray-900 text-xl font-semibold shadow hover:bg-secondary/80 transition mb-2 cursor-pointer">
                 Register
