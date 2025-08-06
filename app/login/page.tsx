@@ -54,7 +54,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <Button type="submit" className="w-full">Login</Button>
+              <Button type="submit" className="w-full hover:cursor-pointer">Login</Button>
               {error && (
                 <div className="text-red-600 text-sm text-center">{error}</div>
               )}
