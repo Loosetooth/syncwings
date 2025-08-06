@@ -1,9 +1,9 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
 import Navbar from "../components/Navbar";
 import { useSearchParams } from "next/navigation";
 
-export default function ErrorPage() {
+function ErrorContent() {
   const searchParams = useSearchParams();
   const errorMsg = searchParams.get("msg") || "An unknown error occurred.";
   return (
@@ -19,5 +19,13 @@ export default function ErrorPage() {
         </div>
       </main>
     </>
+  );
+}
+
+export default function ErrorPage() {
+  return (
+    <Suspense>
+      <ErrorContent />
+    </Suspense>
   );
 }
