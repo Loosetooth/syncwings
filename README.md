@@ -15,6 +15,16 @@ This project provides a simple web interface and backend for managing multiple S
     ```sh
     DATA_DIR=/opt/syncthing-multiuser-data npm start
     ```
+
+- `DATA_DIR_EXTERNAL` (recommended for Docker Compose):
+  - Set this to specify the absolute host path for user Syncthing data and config directories when generating Docker Compose files.
+  - Ensures that Syncthing containers mount user data/config from a fixed location on the host (e.g., `/opt/syncthing-multiuser-data`).
+  - If not set, defaults to `DATA_DIR` if it is set, otherwise falls back to `/data`.
+  - Example usage:
+    ```sh
+    DATA_DIR_EXTERNAL=/opt/syncthing-multiuser-data npm start
+    ```
+
 - `PORT` (optional):
   - Set this to specify the port the Next.js app should listen on (default: 3000).
   - Useful if port 3000 is already in use on your server.

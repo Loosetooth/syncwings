@@ -3,12 +3,17 @@ services:
   syncthing-multi-user:
     image: ghcr.io/loosetooth/syncthing-multi-user:latest
     environment:
+      # Set the data directory inside the container
       - DATA_DIR=/data
+      # Set the external data directory (adjust this path as needed)
+      # This has to be equal to the bind mount for the DATA_DIR in the volumes section below
+      - DATA_DIR_EXTERNAL=/path/to/hdd/data
       # Optionally set the port for the Next.js app (default: 3000)
       - PORT=3001
     # The ./data directory must be created and owned by the same UID:GID as set below
     volumes:
-      - ./data:/data
+      # The host path should be the same as DATA_DIR_EXTERNAL
+      - /path/to/hdd/data:/data
       - /var/run/docker.sock:/var/run/docker.sock
     # Set to UID:GID where GID matches the docker group on your host
     user: "1000:131"

@@ -32,6 +32,8 @@ export class SyncthingInstanceService {
     const tcpPort = 22000 + index;
     const udpPort = 22000 + index;
     const discoveryPort = 21027 + index;
+    const dataDirExternal = process.env.DATA_DIR_EXTERNAL || this.baseDir || '/data';
+    const userExternalDir = `${dataDirExternal}/users/${username}`;
     return `
 services:
   syncthing:
@@ -42,8 +44,8 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - ./config:/config
-      - ./data:/data
+      - ${userExternalDir}/config:/config
+      - ${userExternalDir}/data:/data
     ports:
       - ${webPort}:8384
       - ${tcpPort}:22000/tcp
