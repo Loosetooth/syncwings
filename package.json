@@ -20,6 +20,7 @@
     "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "fast-xml-parser": "^5.2.5",
     "lucide-react": "^0.536.0",
     "next": "^15.4.5",
     "postcss": "^8.5.6",

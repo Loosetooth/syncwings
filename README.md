@@ -33,6 +33,13 @@ This project provides a simple web interface and backend for managing multiple S
     PORT=3001 npm start
     ```
 
+- `SYNC_DOMAIN` (optional, for WAN connections):
+  - Set this to specify a domain name for direct WAN connections to Syncthing instances.
+  - If set, each Syncthing instance will add a `tcp://<domain>:<port>` entry to its listen addresses, allowing remote devices to connect via your public domain (requires port forwarding on your router).
+  - Example usage:
+    ```sh
+    SYNC_DOMAIN=syncthing.example.com npm start
+    ```
 
 ## Usage
 

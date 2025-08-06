@@ -10,6 +10,8 @@ services:
       - DATA_DIR_EXTERNAL=/path/to/hdd/data
       # Optionally set the port for the Next.js app (default: 3000)
       - PORT=3001
+      # Set the sync domain for WAN connections (optional)
+      - SYNC_DOMAIN=syncthing.example.com
     # The ./data directory must be created and owned by the same UID:GID as set below
     volumes:
       # The host path should be the same as DATA_DIR_EXTERNAL
