@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import http from 'http';
-import { userStore } from '../../../userStore';
+import { userStore } from '../../lib/userStore';
 
 // Helper: get the port for the current user
 function getSyncthingPort(username: string): number | null {

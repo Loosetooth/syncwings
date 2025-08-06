@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { clearSessionCookie } from '../../../cookieHelpers';
+import { clearSessionCookie } from '../../lib/cookieHelpers';
 
 export async function POST() {
   // Clear the session cookie

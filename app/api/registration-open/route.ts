@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { userStore } from '../../../userStore';
+import { userStore } from '../../lib/userStore';
 
 export async function GET() {
   const isOpen = userStore.getUserMap().size === 0;

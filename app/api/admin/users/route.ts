@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSessionUser } from '../../../../sessionHelpers';
-import { userStore } from '../../../../userStore';
+import { getSessionUser } from '../../../lib/sessionHelpers';
+import { userStore } from '../../../lib/userStore';
 
 export async function GET(req: NextRequest) {
   const user = await getSessionUser(req);

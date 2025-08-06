@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { makeSessionCookie } from '../../../cookieHelpers';
-import { getSessionUser } from '../../../sessionHelpers';
+import { makeSessionCookie } from '../../lib/cookieHelpers';
+import { getSessionUser } from '../../lib/sessionHelpers';
 
 export async function GET(req: NextRequest) {
   const user = await getSessionUser(req);

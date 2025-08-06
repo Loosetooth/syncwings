@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { UserStore } from '../../../userStore';
-import { makeSessionCookie } from '../../../cookieHelpers';
+import { UserStore } from '../../lib/userStore';
+import { makeSessionCookie } from '../../lib/cookieHelpers';
 
 const store = new UserStore();
 
