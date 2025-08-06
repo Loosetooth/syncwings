@@ -73,7 +73,11 @@ async function handleProxy(req: NextRequest): Promise<Response> {
       });
     });
     proxyReq.on('error', () => {
-      resolve(new Response('Proxy error', { status: 502 }));
+      const errorMsg = encodeURIComponent('Proxy Error. Is the syncthing instance started? Is there incorrect data saved in the session cookie?');
+      resolve(new Response(null, {
+        status: 302,
+        headers: { Location: `/error?msg=${errorMsg}` },
+      }));
     });
     // For methods with a body, pipe the body to the proxy request
     if (req.method !== 'GET' && req.method !== 'HEAD') {
