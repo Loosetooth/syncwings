@@ -5,7 +5,7 @@ import { userStore } from '../../../userStore';
 export async function POST(req: NextRequest) {
   const sessionUser = await getSessionUser(req);
   const isFirstUser = userStore.getUserMap().size === 0;
-  if (!sessionUser || !sessionUser.isAdmin || !isFirstUser) {
+  if (!isFirstUser && (!sessionUser || !sessionUser.isAdmin)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
   }
   const { username, password } = await req.json();
