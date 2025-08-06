@@ -1,7 +1,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-const PUBLIC_PATHS = ['/login', '/register', '/logout', '/api/login', '/api/register', '/api/logout'];
+const PUBLIC_PATHS = ['/login', '/register', '/logout', '/api/login', '/api/register', '/api/logout', '/api/session', '/api/registration-open'];
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -26,5 +26,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next|favicon.ico|api/proxy-syncthing).*)'],
+  matcher: ['/((?!_next|favicon.ico).*)'],
 };
