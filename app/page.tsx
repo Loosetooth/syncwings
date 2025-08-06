@@ -75,9 +75,10 @@ export default function Page() {
         <section className="bg-gray-50 rounded-lg p-6 shadow">
           <h2 className="text-xl font-bold mb-2">How does it work?</h2>
           <ul className="list-disc pl-6 text-gray-700 space-y-1">
-            <li>Each user registers and gets a dedicated Syncthing container.</li>
-            <li>Login to access your own Syncthing web UI and manage your files securely.</li>
-            <li>Admins can add or remove users and manage all instances.</li>
+            <li>Each user is registered and gets a dedicated Syncthing container. <br />
+              The syncthing instance should start automatically after user creation.</li>
+            <li>Login to access your own Syncthing web UI and manage your files.</li>
+            <li>Admins can add or remove users via the admin panel.</li>
             <li>Runs on Docker for easy deployment.</li>
           </ul>
         </section>
