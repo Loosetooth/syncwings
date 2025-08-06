@@ -4,12 +4,12 @@ services:
     image: ghcr.io/loosetooth/syncthing-multi-user:latest
     environment:
       - DATA_DIR=/data
+      # Optionally set the port for the Next.js app (default: 3000)
+      - PORT=3001
     # The ./data directory must be created and owned by the same UID:GID as set below
     volumes:
       - ./data:/data
       - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - "3000:3000"
     # Set to UID:GID where GID matches the docker group on your host
     user: "1000:131"
     restart: unless-stopped
