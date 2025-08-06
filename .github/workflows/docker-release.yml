@@ -39,3 +39,13 @@ jobs:
         run: |
           REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           docker push ghcr.io/$REPO:${{ env.TAG_NAME }}
+
+      - name: Tag image as latest
+        run: |
+          REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker tag ghcr.io/$REPO:${{ env.TAG_NAME }} ghcr.io/$REPO:latest
+
+      - name: Push latest tag
+        run: |
+          REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker push ghcr.io/$REPO:latest
