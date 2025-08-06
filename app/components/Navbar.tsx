@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "./useSession";
+import { useRegistrationOpen } from "./useRegistrationOpen";
 import { useState, useEffect, useRef } from "react";
 
 // DropdownMenu component to close on outside click
@@ -27,13 +28,17 @@ function DropdownMenu({ children, onClose }: { children: React.ReactNode; onClos
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { loggedIn, loading } = useSession();
+  const { loading, ...session } = useSession();
+  const { open: registrationOpen, loading: registrationLoading } = useRegistrationOpen();
 
-  // Hide navbar on /syncthing route
-  if (pathname.startsWith("/syncthing")) return null;
 
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const isLoggedIn = !!session?.loggedIn;
+  const isAdmin = !!session?.isAdmin;
+
+  // Wait for session and registration status to load
+  if (loading || registrationLoading) return null;
 
   return (
     <nav className="bg-white border-b shadow flex items-center px-4 py-2 mb-8 relative">
@@ -52,24 +57,30 @@ export default function Navbar() {
       </button>
       {/* Inline links for md+ screens */}
       <div className="hidden md:flex gap-4 items-center">
-        {loading ? null : (
-          <>
-            {!loggedIn && <Link href="/login" className="text-gray-700 hover:text-primary">Log in</Link>}
-            {!loggedIn && <Link href="/register" className="text-gray-700 hover:text-primary">Register</Link>}
-            {loggedIn && <Link href="/syncthing" className="text-gray-700 hover:text-primary">My Syncthing</Link>}
-            {loggedIn && <Link href="/logout" className="text-gray-700 hover:text-primary">Log out</Link>}
-            {loggedIn && <Link href="/admin" className="text-gray-700 hover:text-primary">Admin</Link>}
-          </>
-        )}
+        {/* Show login only if not logged in and registration is closed */}
+        {!isLoggedIn && !registrationOpen && <Link href="/login" className="text-gray-700 hover:text-primary">Log in</Link>}
+        {/* Show register only if registration is open (no users yet) */}
+        {registrationOpen && <Link href="/register" className="text-gray-700 hover:text-primary">Register</Link>}
+        {/* Show My Syncthing if logged in */}
+        {isLoggedIn && <Link href="/syncthing" className="text-gray-700 hover:text-primary">My Syncthing</Link>}
+        {/* Show Log out if logged in */}
+        {isLoggedIn && <Link href="/logout" className="text-gray-700 hover:text-primary">Log out</Link>}
+        {/* Show Admin only if logged in and is admin */}
+        {isLoggedIn && isAdmin && <Link href="/admin" className="text-gray-700 hover:text-primary">Admin</Link>}
       </div>
       {/* Dropdown for small screens */}
-      {menuOpen && !loading && (
+      {menuOpen && (
         <DropdownMenu onClose={() => setMenuOpen(false)}>
-          {!loggedIn && <Link href="/login" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>Log in</Link>}
-          {!loggedIn && <Link href="/register" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>Register</Link>}
-          {loggedIn && <Link href="/syncthing" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>My Syncthing</Link>}
-          {loggedIn && <Link href="/logout" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>Log out</Link>}
-          {loggedIn && <Link href="/admin" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>Admin</Link>}
+          {/* Show login only if not logged in and registration is closed */}
+          {!isLoggedIn && registrationOpen === false && <Link href="/login" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>Log in</Link>}
+          {/* Show register only if registration is open (no users yet) */}
+          {registrationOpen === true && <Link href="/register" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>Register</Link>}
+          {/* Show My Syncthing if logged in */}
+          {isLoggedIn && <Link href="/syncthing" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>My Syncthing</Link>}
+          {/* Show Log out if logged in */}
+          {isLoggedIn && <Link href="/logout" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>Log out</Link>}
+          {/* Show Admin only if logged in and is admin */}
+          {isLoggedIn && isAdmin && <Link href="/admin" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>Admin</Link>}
         </DropdownMenu>
       )}
     </nav>

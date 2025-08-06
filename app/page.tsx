@@ -1,8 +1,29 @@
 "use client";
 import Navbar from "./components/Navbar";
 import Link from "next/link";
+import { useSession } from "./components/useSession";
+import { useRegistrationOpen } from "./components/useRegistrationOpen";
 
 export default function Page() {
+  const { loading, ...session } = useSession();
+  const { open: registrationOpen, loading: registrationLoading } = useRegistrationOpen();
+
+  // Wait for session and registration status to load
+  if (loading || registrationLoading) {
+    return (
+      <>
+        <Navbar />
+        <main className="max-w-2xl mx-auto px-4 py-10">
+          <h1 className="text-3xl font-bold mb-4 text-center">Syncthing Multi-User Manager</h1>
+          <div className="text-center text-gray-600 text-lg">Loading...</div>
+        </main>
+      </>
+    );
+  }
+
+  const isLoggedIn = !!session?.loggedIn;
+  const isAdmin = !!session?.isAdmin;
+
   return (
     <>
       <Navbar />
@@ -13,24 +34,42 @@ export default function Page() {
         </p>
 
         <div className="flex flex-col gap-6 mb-10">
-          <Link href="/login" className="block">
-            <button className="w-full py-4 px-6 rounded-lg bg-primary text-white text-xl font-semibold shadow hover:bg-primary/90 transition mb-2 cursor-pointer">
-              Login
-            </button>
-            <div className="text-gray-600 text-center text-sm">Access your personal Syncthing dashboard</div>
-          </Link>
-          <Link href="/register" className="block">
-            <button className="w-full py-4 px-6 rounded-lg bg-secondary text-gray-900 text-xl font-semibold shadow hover:bg-secondary/80 transition mb-2 cursor-pointer">
-              Register
-            </button>
-            <div className="text-gray-600 text-center text-sm">Create a new user and Syncthing instance</div>
-          </Link>
-          <Link href="/admin" className="block">
-            <button className="w-full py-4 px-6 rounded-lg bg-gray-800 text-white text-xl font-semibold shadow hover:bg-gray-700 transition mb-2 cursor-pointer">
-              Admin
-            </button>
-            <div className="text-gray-600 text-center text-sm">Administer users and manage all Syncthing instances</div>
-          </Link>
+          {/* Show login button only if user is not logged in and registration is closed */}
+          {!isLoggedIn && !registrationOpen && (
+            <Link href="/login" className="block">
+              <button className="w-full py-4 px-6 rounded-lg bg-primary text-white text-xl font-semibold shadow hover:bg-primary/90 transition mb-2 cursor-pointer">
+                Login
+              </button>
+              <div className="text-gray-600 text-center text-sm">Access your personal Syncthing dashboard</div>
+            </Link>
+          )}
+          {/* If logged in, show button to access user's Syncthing instance */}
+          {isLoggedIn && (
+            <Link href="/syncthing" className="block">
+              <button className="w-full py-4 px-6 rounded-lg bg-primary text-white text-xl font-semibold shadow hover:bg-primary/90 transition mb-2 cursor-pointer">
+                Go to My Syncthing
+              </button>
+              <div className="text-gray-600 text-center text-sm">Access your personal Syncthing dashboard</div>
+            </Link>
+          )}
+          {/* Show register button only if registration is open (no users yet) */}
+          {registrationOpen === true && (
+            <Link href="/register" className="block">
+              <button className="w-full py-4 px-6 rounded-lg bg-secondary text-gray-900 text-xl font-semibold shadow hover:bg-secondary/80 transition mb-2 cursor-pointer">
+                Register
+              </button>
+              <div className="text-gray-600 text-center text-sm">Create the first user and Syncthing instance</div>
+            </Link>
+          )}
+          {/* Show admin button only if logged in and is admin */}
+          {isLoggedIn && isAdmin && (
+            <Link href="/admin" className="block">
+              <button className="w-full py-4 px-6 rounded-lg bg-gray-800 text-white text-xl font-semibold shadow hover:bg-gray-700 transition mb-2 cursor-pointer">
+                Admin
+              </button>
+              <div className="text-gray-600 text-center text-sm">Administer users and manage all Syncthing instances</div>
+            </Link>
+          )}
         </div>
 
         <section className="bg-gray-50 rounded-lg p-6 shadow">
