@@ -63,6 +63,8 @@ export default function Navbar() {
             {registrationOpen && <Link href="/register" className="text-gray-700 hover:text-primary">Register</Link>}
             {/* Show My Syncthing if logged in */}
             {isLoggedIn && <Link href="/syncthing" className="text-gray-700 hover:text-primary">My Syncthing</Link>}
+            {/* Show Update Password if logged in */}
+            {isLoggedIn && <Link href="/update-password" className="text-gray-700 hover:text-primary">Update Password</Link>}
             {/* Show Log out if logged in */}
             {isLoggedIn && <Link href="/logout" className="text-gray-700 hover:text-primary">Log out</Link>}
             {/* Show Admin only if logged in and is admin */}
@@ -77,6 +79,8 @@ export default function Navbar() {
               {registrationOpen === true && <Link href="/register" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>Register</Link>}
               {/* Show My Syncthing if logged in */}
               {isLoggedIn && <Link href="/syncthing" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>My Syncthing</Link>}
+              {/* Show Update Password if logged in */}
+              {isLoggedIn && <Link href="/update-password" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>Update Password</Link>}
               {/* Show Log out if logged in */}
               {isLoggedIn && <Link href="/logout" className="px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>Log out</Link>}
               {/* Show Admin only if logged in and is admin */}

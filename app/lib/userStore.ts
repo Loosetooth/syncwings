@@ -89,6 +89,15 @@ export class UserStore {
     this.syncthingService.startInstance(username, index);
   }
 
+  updatePassword(username: string, newPassword: string): void {
+    const userMap = this.getUserMap();
+    if (!userMap.has(username)) throw new Error('User not found');
+    const user = userMap.get(username)!;
+    user.passwordHash = bcrypt.hashSync(newPassword, 10);
+    userMap.set(username, user);
+    this.writeUserMap(userMap);
+  }
+
   removeUser(username: string): void {
     const userMap = this.getUserMap();
     if (!userMap.has(username)) throw new Error('User not found');
