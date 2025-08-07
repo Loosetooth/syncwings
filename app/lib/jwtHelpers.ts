@@ -3,13 +3,13 @@
 import { SignJWT, jwtVerify } from 'jose';
 
 const SESSION_SECRET = process.env.SESSION_SECRET;
-if (!SESSION_SECRET) {
-  throw new Error('SESSION_SECRET environment variable is not set');
-}
 const DEFAULT_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
 // jose requires a Uint8Array key
 function getSecretKey() {
+  if (!SESSION_SECRET) {
+    throw new Error('SESSION_SECRET environment variable is not set');
+  }
   return new TextEncoder().encode(SESSION_SECRET);
 }
 
