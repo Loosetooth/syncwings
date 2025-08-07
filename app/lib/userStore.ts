@@ -59,6 +59,11 @@ export class UserStore {
     return this.userMapCache;
   }
 
+  getUser(username: string): User | null {
+    const userMap = this.getUserMap();
+    return userMap.get(username) || null;
+  }
+
   private writeUserMap(userMap: Map<string, User>): void {
     const users = Array.from(userMap.values());
     const data = { users, latestIndex: this.latestIndex };

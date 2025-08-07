@@ -1,13 +1,6 @@
 import { NextRequest } from 'next/server';
 import http from 'http';
-import { userStore } from '../../lib/userStore';
-
-// Helper: get the port for the current user
-function getSyncthingPort(username: string): number | null {
-  const user = userStore.getUserMap().get(username);
-  if (!user) return null;
-  return 8384 + user.index;
-}
+import { getSessionLight } from '@/lib/getSessionLight';
 
 /**
  * Handles the proxying of Syncthing requests.
@@ -19,23 +12,16 @@ function getSyncthingPort(username: string): number | null {
  * Trailing slashes are manually removed because Next.js only supports either always or never having them.
  */
 async function handleProxy(req: NextRequest): Promise<Response> {
-  // Get session cookie
-  const cookie = req.headers.get('cookie');
-  let username = '';
-  if (cookie) {
-    const match = cookie.split(';').map(c => c.trim()).find(c => c.startsWith('session='));
-    if (match) {
-      username = decodeURIComponent(match.split('=')[1]);
-    }
-  }
-  if (!username) {
+  // Get session from JWT
+  const session = await getSessionLight(req);
+  if (!session || !session.username || typeof session.index !== 'number') {
     // Redirect to login if not logged in
     return new Response(null, {
       status: 302,
       headers: { Location: '/login' },
     });
   }
-  const port = getSyncthingPort(username);
+  const port = 8384 + session.index;
   if (!port) {
     return new Response('No Syncthing instance found', { status: 404 });
   }

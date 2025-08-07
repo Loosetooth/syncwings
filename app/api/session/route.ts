@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ loggedIn: false });
   }
   // Refresh the session cookie expiry
-  const newCookie = makeSessionCookie(user.username);
+  const newCookie = await makeSessionCookie({ username: user.username, index: user.index });
   const res = NextResponse.json({ loggedIn: true, username: user.username, isAdmin: user.isAdmin });
   res.headers.set('Set-Cookie', newCookie);
   return res;
