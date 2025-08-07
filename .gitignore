@@ -2,3 +2,7 @@
 node_modules
 users.json
 users
+
+.env.local
+.env.*
+.env
