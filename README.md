@@ -85,8 +85,7 @@ Adjust the compose file and permissions as needed for your environment.
 
 ## Notes
 - This project is intended for Linux environments.
-- All user and instance data is stored in a single JSON file for simplicity.
-- For production, secure the backend and restrict access to Docker management features.
+- All user adata is stored in a single JSON file for simplicity.
 
 ---
 
