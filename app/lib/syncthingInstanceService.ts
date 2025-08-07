@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
+import { syncthingContainerTag } from './constants';
 
 /**
  * Service to manage Syncthing instances for users.
@@ -41,7 +42,7 @@ export class SyncthingInstanceService {
     return `
 services:
   syncthing:
-    image: linuxserver/syncthing:1.30.0
+    image: linuxserver/syncthing:${syncthingContainerTag}
     container_name: syncthing_${username}
     environment:
       - PUID=1000

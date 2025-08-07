@@ -25,6 +25,14 @@ This project provides a simple web interface and backend for managing multiple S
     DATA_DIR_EXTERNAL=/opt/syncthing-multiuser-data npm start
     ```
 
+- `SYNCTHING_CONTAINER_TAG` (optional):
+  - Set this to specify the tag/version of the Syncthing container image used for each user instance (default: `1.30.0`).
+  - The container used is [`linuxserver/syncthing`](https://hub.docker.com/r/linuxserver/syncthing).
+  - Example usage:
+    ```sh
+    SYNCTHING_CONTAINER_TAG=latest npm start
+    ```
+
 - `PORT` (optional):
   - Set this to specify the port the Next.js app should listen on (default: 3000).
   - Useful if port 3000 is already in use on your server.
