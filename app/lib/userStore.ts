@@ -130,10 +130,10 @@ export class UserStore {
     this.writeUserMap(userMap);
   }
 
-  startAllInstances(): void {
+  async startAllInstances() {
     const users = this.readUsers();
     for (const user of users) {
-      this.syncthingService.startInstance(user.username, user.index);
+      await this.syncthingService.startInstance(user.username, user.index);
     }
   }
 

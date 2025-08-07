@@ -58,7 +58,7 @@ services:
     restart: unless-stopped
 `;
   }
-  updateSyncthingConfig(username: string, index: number) {
+  async updateSyncthingConfig(username: string, index: number) {
     const tcpPort = 22000 + index;
     const discoveryPort = 21027 + index;
 
@@ -87,6 +87,17 @@ services:
       console.log(`No changes to config.xml for ${username}`);
       return { updated: false };
     } else {
+      const waitTimes = [5000, 10000, 15000];
+      // check if file exists before writing
+      while (!fs.existsSync(configPath)) {
+        if (waitTimes.length === 0) {
+          console.error(`Config file does not exist for ${username}: ${configPath}`);
+          throw new Error(`Config file for ${username} does not exist after multiple attempts: ${configPath}`);
+        }
+        // Wait for a while before retrying
+        await new Promise(resolve => setTimeout(resolve, waitTimes.shift()));
+      }
+
       fs.writeFileSync(configPath, newXml, 'utf8');
       console.log(`Updated config.xml for ${username}`);
       return { updated: true };
@@ -130,18 +141,17 @@ services:
     this.stopComposeInstance(username);
     this.removeUserDirs(username);
   }
-  startInstance(username: string, index: number) {
+  async startInstance(username: string, index: number) {
     this.ensureUserDirs(username);
     this.writeComposeFile(username, index);
     this.startComposeInstance(username);
-    const { updated } = this.updateSyncthingConfig(username, index);
+    const { updated } = await this.updateSyncthingConfig(username, index);
     if (updated) {
       console.log(`Syncthing config updated for ${username}. Restarting instance...`);
       this.stopComposeInstance(username);
       // Add a short delay to ensure container is fully stopped
-      setTimeout(() => {
-        this.startComposeInstance(username);
-      }, 2000);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      this.startComposeInstance(username);
     }
   }
   stopInstance(username: string) {
