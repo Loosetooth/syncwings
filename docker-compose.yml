@@ -3,6 +3,10 @@ services:
   syncthing-multi-user:
     image: ghcr.io/loosetooth/syncthing-multi-user:latest
     environment:
+      # Secret for JWT signing.
+      # Generate with `openssl rand -base64 64` and remove the newline
+      # REPLACE THIS WITH A STRONG SECRET
+      - SESSION_SECRET=your-long-and-random-secret-string
       # Set the data directory inside the container
       - DATA_DIR=/data
       # Set the external data directory (adjust this path as needed)

@@ -8,6 +8,14 @@ This project provides a simple web interface and backend for managing multiple S
 - Admin can add or remove users
 
 ## Environment Variables
+- `SESSION_SECRET` (required):
+  - Secret key used to sign and verify session cookies (JWTs). Must be set to a long, random string in production.
+  - Generate with `openssl rand -base64 64` and remove the newline from the output.
+  - Example usage:
+    ```sh
+    SESSION_SECRET=your-very-secret-string npm start
+    ```
+
 - `DATA_DIR` (optional):
   - Set this to specify a custom directory for storing the `users.json` file (user database) and user's syncthing data.
   - If not set, the project root directory is used by default.
