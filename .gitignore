@@ -6,3 +6,5 @@ users
 .env.local
 .env.*
 .env
+
+filestash
