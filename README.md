@@ -34,8 +34,8 @@ This project provides a simple web interface and backend for managing multiple S
     ```
 
 - `SYNCTHING_CONTAINER_TAG` (optional):
-  - Set this to specify the tag/version of the Syncthing container image used for each user instance (default: `1.30.0`).
-  - The container used is [`linuxserver/syncthing`](https://hub.docker.com/r/linuxserver/syncthing).
+  - Set this to specify the tag/version of the Syncthing container image used for each user instance (default: `2.0.1`).
+  - The container used is [`syncthing/syncthing`](https://hub.docker.com/r/syncthing/syncthing).
   - Example usage:
     ```sh
     SYNCTHING_CONTAINER_TAG=latest npm start
