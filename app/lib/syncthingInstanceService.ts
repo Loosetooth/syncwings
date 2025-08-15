@@ -82,6 +82,16 @@ services:
     config.configuration.options.localAnnouncePort = discoveryPort;
     config.configuration.options.localAnnounceMCAddr = `[ff12::8384]:${discoveryPort}`;
 
+    // Set default folder path and auto-accept
+    config.configuration.defaults = {
+      folder: {
+        '@_path': '/data/'
+      },
+      device: {
+        autoAcceptFolders: 'true'
+      }
+    };
+
     // Write back
     const newXml = builder.build(config);
     if (xml === newXml) {
