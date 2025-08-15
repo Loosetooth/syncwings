@@ -42,7 +42,7 @@ export class SyncthingInstanceService {
     return `
 services:
   syncthing:
-    image: linuxserver/syncthing:${syncthingContainerTag}
+    image: syncthing/syncthing:${syncthingContainerTag}
     container_name: syncthing_${username}
     environment:
       - PUID=1000
