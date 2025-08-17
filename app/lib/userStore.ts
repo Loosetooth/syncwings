@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import bcrypt from 'bcryptjs';
-import { SyncthingInstanceService } from './syncthingInstanceService';
+import { InstanceService } from './instanceService';
 
 export interface User {
   username: string;
@@ -18,13 +18,13 @@ export class UserStore {
   private usersFile: string;
   private userMapCache: Map<string, User> | null = null;
   private latestIndex: number = 2;
-  private syncthingService: SyncthingInstanceService;
+  private instanceService: InstanceService;
 
-  constructor(configDir?: string, syncthingService?: SyncthingInstanceService) {
+  constructor(configDir?: string, instanceService?: InstanceService) {
     this.configDir = configDir || process.env.DATA_DIR || process.cwd();
     this.usersFile = path.join(this.configDir, 'users.json');
     this.loadLatestIndex();
-    this.syncthingService = syncthingService || new SyncthingInstanceService(this.configDir);
+    this.instanceService = instanceService || new InstanceService(this.configDir);
   }
 
   private loadLatestIndex() {
@@ -86,7 +86,7 @@ export class UserStore {
     userMap.set(username, { username, passwordHash, syncthingInstance: username, isAdmin: isFirstUser || isAdmin, index });
     this.writeUserMap(userMap);
     // --- Compose file and instance management ---
-    this.syncthingService.startInstance(username, index);
+    this.instanceService.startInstance(username, index);
   }
 
   updatePassword(username: string, newPassword: string): void {
@@ -103,7 +103,7 @@ export class UserStore {
     if (!userMap.has(username)) throw new Error('User not found');
     userMap.delete(username);
     this.writeUserMap(userMap);
-    this.syncthingService.removeInstanceAndData(username);
+    this.instanceService.removeInstanceAndData(username);
   }
 
   promoteToAdmin(username: string): void {
@@ -142,14 +142,14 @@ export class UserStore {
   async startAllInstances() {
     const users = this.readUsers();
     for (const user of users) {
-      await this.syncthingService.startInstance(user.username, user.index);
+      await this.instanceService.startInstance(user.username, user.index);
     }
   }
 
   stopAllInstances(): void {
     const users = this.readUsers();
     for (const user of users) {
-      this.syncthingService.stopComposeInstance(user.username);
+      this.instanceService.stopComposeInstance(user.username);
     }
   }
 }

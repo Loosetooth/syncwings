@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 import { UserStore } from './userStore';
-import { SyncthingInstanceService } from './syncthingInstanceService';
+import { InstanceService } from './instanceService';
 
 const TEST_DATA_DIR = path.join(process.cwd(), '__test_config');
 let store: UserStore;
@@ -14,8 +14,8 @@ function cleanTestConfig() {
 
 describe('UserStore', () => {
   beforeAll(() => {
-    const syncthingService = new SyncthingInstanceService(TEST_DATA_DIR, false);
-    store = new UserStore(TEST_DATA_DIR, syncthingService);
+    const instanceService = new InstanceService(TEST_DATA_DIR, false);
+    store = new UserStore(TEST_DATA_DIR, instanceService);
     cleanTestConfig();
   })
 

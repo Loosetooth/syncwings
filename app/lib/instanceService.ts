@@ -9,7 +9,7 @@ import { syncthingContainerTag } from './constants';
  * Handles user directories, Docker Compose files, and instance management.
  * Each user has a unique Syncthing instance with its own configuration and data directories.
  */
-export class SyncthingInstanceService {
+export class InstanceService {
   private baseDir: string;
   private enableDocker: boolean;
   constructor(baseDir: string, enableDocker: boolean = true) {

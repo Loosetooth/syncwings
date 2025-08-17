@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fs from 'fs';
 import path from 'path';
-import { SyncthingInstanceService } from './syncthingInstanceService';
+import { InstanceService } from './instanceService';
 import { execSync } from 'child_process';
 
 const TEST_BASE_DIR = path.join(process.cwd(), '__test_syncthing_instances');
 const TEST_USER = 'testuser';
 const TEST_INDEX = 99;
-let service: SyncthingInstanceService;
+let service: InstanceService;
 
 function cleanTestDir() {
   if (fs.existsSync(TEST_BASE_DIR)) fs.rmSync(TEST_BASE_DIR, { recursive: true, force: true });
@@ -17,7 +17,7 @@ describe('SyncthingInstanceService (integration)', () => {
   beforeEach(() => {
     cleanTestDir();
     fs.mkdirSync(TEST_BASE_DIR, { recursive: true });
-    service = new SyncthingInstanceService(TEST_BASE_DIR, true);
+    service = new InstanceService(TEST_BASE_DIR, true);
   });
 
   afterEach(() => {
