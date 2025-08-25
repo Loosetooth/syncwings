@@ -64,10 +64,10 @@ services:
       - ${userExternalDir}/config:/var/syncthing/config
       - ${userExternalDir}/data:/data
     ports:
-      - ${webPort}:8384
-      - ${tcpPort}:${tcpPort}/tcp
-      - ${udpPort}:${udpPort}/udp
-      - ${discoveryPort}:${discoveryPort}/udp
+      - 127.0.0.1:${webPort}:8384
+      - 127.0.0.1:${tcpPort}:${tcpPort}/tcp
+      - 127.0.0.1:${udpPort}:${udpPort}/udp
+      - 127.0.0.1:${discoveryPort}:${discoveryPort}/udp
     restart: unless-stopped
     `;
 
@@ -83,7 +83,7 @@ services:
       - CANARY=true
       - FILESTASH_BASE=/filestash
     ports:
-      - "${fileStashUiPort}:8334"
+      - "127.0.0.1:${fileStashUiPort}:8334"
     volumes:
       - ${userExternalDir}/filestash:/app/data/state/
       - ${userExternalDir}/data:/app/userdata
