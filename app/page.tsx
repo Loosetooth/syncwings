@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import Link from "next/link";
 import { useSession } from "./components/useSession";
 import { useRegistrationOpen } from "./components/useRegistrationOpen";
+import { enableFileStash } from "./lib/constants.shared";
 
 export default function Page() {
   const { loading, ...session } = useSession();
@@ -50,6 +51,15 @@ export default function Page() {
                 Go to My Syncthing
               </button>
               <div className="text-gray-600 text-center text-sm">Access your personal Syncthing dashboard</div>
+            </Link>
+          )}
+          {/* Show Filestash button if logged in and Filestash is enabled */}
+          {isLoggedIn && enableFileStash && (
+            <Link href="/filestash/" className="block">
+              <button className="w-full py-4 px-6 rounded-lg bg-primary text-white text-xl font-semibold shadow hover:bg-primary/90 transition mb-2 cursor-pointer">
+                Browse My Folders
+              </button>
+              <div className="text-gray-600 text-center text-sm">Access your personal Filestash dashboard</div>
             </Link>
           )}
           {/* Show register button only if registration is open (no users yet) */}

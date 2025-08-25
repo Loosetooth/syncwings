@@ -49,6 +49,13 @@ This project provides a simple web interface and backend for managing multiple S
     PORT=3001 npm start
     ```
 
+- `NEXT_PUBLIC_ENABLE_FILE_STASH` (optional):
+  - Set this to `true` to enable the File Stash integration, allowing users to upload and manage files through the web interface.
+  - Defaults to `true` if not set.
+
+- `FILESTASH_CONTAINER_TAG` (optional):
+  - Set this to specify the tag/version of the File Stash container image used (default: `latest`).
+  - The container used is [`machines/filestash`](https://hub.docker.com/r/machines/filestash).
 
 ## Usage
 
