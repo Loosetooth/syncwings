@@ -202,7 +202,7 @@ services:
     const idParamObj = { strategy: 'direct' };
     const idpParamsUnencrypted = JSON.stringify(idParamObj);
     const idpParams = encryptFilestashConfig(secretKey, idpParamsUnencrypted);
-    const attributeParamsObj = { local: { type: 'local', password: 'test', path: '/app/userdata' } };
+    const attributeParamsObj = { local: { type: 'local', password: secretKey, path: '/app/userdata' } };
     const attributeParamsUnencrypted = JSON.stringify(attributeParamsObj);
     const attributeMappingParams = encryptFilestashConfig(secretKey, attributeParamsUnencrypted);
 
