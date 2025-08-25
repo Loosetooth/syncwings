@@ -162,6 +162,11 @@ services:
         identity_provider?: { type: string; params?: string };
         attribute_mapping?: { related_backend: string; params?: string | null };
       };
+      features?: {
+        share?: {
+          enable?: boolean;
+        };
+      };
     };
 
     let originalConfig: FileStashConfig = {};
@@ -233,7 +238,16 @@ services:
         params: attributeParamsUnencrypted,
       },
     };
-    if (JSON.stringify(unencryptedOriginalMiddleware) === JSON.stringify(unencryptedNewMiddleware)) {
+
+    // Set features.share.enabled to false by default
+    if (!newConfig.features) newConfig.features = {};
+    if (!newConfig.features.share) newConfig.features.share = {};
+    newConfig.features.share.enable = false;
+
+    const isShareFeatureSame = originalConfig.features?.share?.enable === newConfig.features.share.enable;
+    const isMiddlewareSame = JSON.stringify(unencryptedOriginalMiddleware) === JSON.stringify(unencryptedNewMiddleware);
+
+    if (isShareFeatureSame && isMiddlewareSame) {
       console.log(`No changes to filestash middleware config for ${username}`);
       return { updated: false };
     }
