@@ -6,6 +6,7 @@ import { fileStashContainerTag, syncthingContainerTag } from './constants';
 import { generateFilestashSecretKey, encryptFilestashConfig, decryptFilestashConfig } from './filestash/crypto';
 import { enableFileStash } from './constants.shared';
 import { waitForFileExists } from './awaitFileExists';
+import { updateSyncthingConfigString } from './syncthingConfig';
 
 /**
  * Service to manage Syncthing instances for users.
@@ -94,9 +95,6 @@ services:
   }
 
   async updateSyncthingConfig(username: string, index: number) {
-    const tcpPort = 22000 + index;
-    const discoveryPort = 21027 + index;
-
     const configPath = this.getConfigXmlPath(username);
 
     let xml = '';
@@ -107,38 +105,13 @@ services:
       console.error(`Error reading ${configPath}:`, error);
       throw new Error(`Could not read config file for ${username}: ${configPath}`);
     }
-    const parser = new XMLParser({ ignoreAttributes: false });
-    const builder = new XMLBuilder({ ignoreAttributes: false, format: true });
-    const config = parser.parse(xml);
 
-    // Update listenAddress (each as a separate element)
-    const listenAddresses = [
-      `tcp://0.0.0.0:${tcpPort}`,
-      `quic://0.0.0.0:${tcpPort}`,
-      'dynamic+https://relays.syncthing.net/endpoint'
-    ];
-    config.configuration.options.listenAddress = listenAddresses;
+    const updateResult = updateSyncthingConfigString(xml, username, index);
 
-    // Update localAnnouncePort and localAnnounceMCAddr
-    config.configuration.options.localAnnouncePort = discoveryPort;
-    config.configuration.options.localAnnounceMCAddr = `[ff12::8384]:${discoveryPort}`;
-
-    // Set default folder path and auto-accept
-    config.configuration.defaults = {
-      folder: {
-        '@_path': '/data/'
-      },
-      device: {
-        autoAcceptFolders: 'true'
-      }
-    };
-
-    // Write back
-    const newXml = builder.build(config);
-    if (xml === newXml) {
-      console.log(`No changes to config.xml for ${username}`);
+    if(!updateResult.updated) {
       return { updated: false };
     } else {
+      const newXml = updateResult.xml!;
       try {
         await waitForFileExists(configPath);
       } catch (error) {
