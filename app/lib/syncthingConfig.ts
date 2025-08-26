@@ -13,7 +13,11 @@ export const updateSyncthingConfigString = (originalConfigXml: string, username:
   const discoveryPort = 21027 + index;
 
   const parser = new XMLParser({ ignoreAttributes: false });
-  const builder = new XMLBuilder({ ignoreAttributes: false, format: true });
+  const builder = new XMLBuilder({
+    ignoreAttributes: false,
+    format: true,
+    suppressBooleanAttributes: false
+  });
   const config = parser.parse(originalConfigXml);
 
   let modified = false;
