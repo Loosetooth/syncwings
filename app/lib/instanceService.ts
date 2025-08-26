@@ -1,12 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
-import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import { fileStashContainerTag, syncthingContainerTag } from './constants';
-import { generateFilestashSecretKey, encryptFilestashConfig, decryptFilestashConfig } from './filestash/crypto';
 import { enableFileStash } from './constants.shared';
 import { waitForFileExists } from './awaitFileExists';
 import { updateSyncthingConfigString } from './syncthingConfig';
+import { updateFilestashConfigString } from './filestash/filestashConfig';
 
 /**
  * Service to manage Syncthing instances for users.
@@ -127,24 +126,7 @@ services:
 
   async updateFileStashConfig(username: string, index: number) {
     const configPath = this.getFileStashConfigPath(username);
-
-    type FileStashConfig = {
-      general?: { secret_key?: string };
-      connections?: { type: string; label: string }[];
-      middleware?: {
-        identity_provider?: { type: string; params?: string };
-        attribute_mapping?: { related_backend: string; params?: string | null };
-      };
-      features?: {
-        share?: {
-          enable?: boolean;
-        };
-      };
-    };
-
-    let originalConfig: FileStashConfig = {};
-    let newConfig: FileStashConfig = {};
-    let secretKey: string | undefined;
+    let configString = '';
 
     // Wait until config file exists (up to ~30s)
     // This is needed because the filestash container may not have created it yet
@@ -153,90 +135,21 @@ services:
     // If after all retries it still doesn't exist, we will create a new config
     try {
       await waitForFileExists(configPath);
-      originalConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-      // clone the original config to newConfig
-      newConfig = structuredClone(originalConfig);
-      secretKey = newConfig.general?.secret_key;
+      configString = fs.readFileSync(configPath, 'utf8');
     } catch (error) {
       // If it doesn't exist after retries, we will create a new config
       console.error(`Filestash config file does not exist for user ${username}.`);
       throw new Error(`Could not read config file for ${username}: ${configPath}`);
     }
 
-    if (!secretKey) {
-      secretKey = generateFilestashSecretKey();
-      if (!newConfig.general) newConfig.general = {};
-      newConfig.general.secret_key = secretKey;
-    }
+    const updateResult = updateFilestashConfigString(configString, username, index);
 
-    // Set required properties
-    newConfig.connections = [
-      {
-        type: 'local',
-        label: 'local',
-      },
-    ];
-
-    // Middleware filestash configuration
-    const idParamObj = { strategy: 'direct' };
-    const idpParamsUnencrypted = JSON.stringify(idParamObj);
-    const idpParams = encryptFilestashConfig(secretKey, idpParamsUnencrypted);
-    const attributeParamsObj = { local: { type: 'local', password: secretKey, path: '/app/userdata' } };
-    const attributeParamsUnencrypted = JSON.stringify(attributeParamsObj);
-    const attributeMappingParams = encryptFilestashConfig(secretKey, attributeParamsUnencrypted);
-
-    // Check if the config is the same, if not, update
-    // We need to check unencrypted values because encrypted values will differ each time
-    // due to changing nonce/iv
-    const unencryptedOriginalIdpParams = originalConfig.middleware?.identity_provider?.params ?
-      decryptFilestashConfig(secretKey, originalConfig.middleware?.identity_provider?.params) : undefined;
-    const unencryptedOriginalAttributeParams = originalConfig.middleware?.attribute_mapping?.params ?
-      decryptFilestashConfig(secretKey, originalConfig.middleware?.attribute_mapping?.params) : undefined;
-    const unencryptedOriginalMiddleware = {
-      identity_provider: {
-        type: originalConfig.middleware?.identity_provider?.type,
-        params: unencryptedOriginalIdpParams,
-      },
-      attribute_mapping: {
-        related_backend: originalConfig.middleware?.attribute_mapping?.related_backend,
-        params: unencryptedOriginalAttributeParams,
-      },
-    };
-    const unencryptedNewMiddleware = {
-      identity_provider: {
-        type: 'passthrough',
-        params: idpParamsUnencrypted,
-      },
-      attribute_mapping: {
-        related_backend: 'local',
-        params: attributeParamsUnencrypted,
-      },
-    };
-
-    // Set features.share.enabled to false by default
-    if (!newConfig.features) newConfig.features = {};
-    if (!newConfig.features.share) newConfig.features.share = {};
-    newConfig.features.share.enable = false;
-
-    const isShareFeatureSame = originalConfig.features?.share?.enable === newConfig.features.share.enable;
-    const isMiddlewareSame = JSON.stringify(unencryptedOriginalMiddleware) === JSON.stringify(unencryptedNewMiddleware);
-
-    if (isShareFeatureSame && isMiddlewareSame) {
-      console.log(`No changes to filestash middleware config for ${username}`);
+    if (!updateResult.updated) {
       return { updated: false };
     }
 
-    newConfig.middleware = {
-      identity_provider: {
-        type: 'passthrough',
-        params: idpParams,
-      },
-      attribute_mapping: {
-        related_backend: 'local',
-        params: attributeMappingParams,
-      },
-    };
-
+    const newConfig = updateResult.config!;
+    
     try {
       await waitForFileExists(configPath);
     } catch (error) {
