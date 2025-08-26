@@ -142,7 +142,7 @@ export class UserStore {
   async startAllInstances() {
     const users = this.readUsers();
     for (const user of users) {
-      await this.instanceService.startInstance(user.username, user.index);
+      this.instanceService.startInstance(user.username, user.index);
     }
   }
 
