@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSessionUser } from '../../lib/sessionHelpers';
-import { userStore } from '../../lib/userStore';
+import { getUserStore } from '@/lib/userStoreSingleton';
 
 export async function POST(req: NextRequest) {
+  const userStore = getUserStore();
   const sessionUser = await getSessionUser(req);
   const isFirstUser = userStore.getUserMap().size === 0;
   if (!isFirstUser && (!sessionUser || !sessionUser.isAdmin)) {

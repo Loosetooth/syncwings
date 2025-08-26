@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSessionUser } from '../../../lib/sessionHelpers';
-import { userStore } from '../../../lib/userStore';
+import { getUserStore } from '@/lib/userStoreSingleton';
 
 export async function GET(req: NextRequest) {
   const user = await getSessionUser(req);
   if (!user || !user.isAdmin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const userStore = getUserStore();
   const users = userStore.readUsers().map(u => ({ username: u.username, isAdmin: u.isAdmin }));
   return NextResponse.json({ users });
 }
@@ -15,7 +16,8 @@ export async function POST(req: NextRequest) {
   const { username, password, isAdmin } = await req.json();
   if (!username || !password) return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
   try {
-    await userStore.addUser(username, password, !!isAdmin);
+    const userStore = getUserStore();
+    userStore.addUser(username, password, !!isAdmin);
     return NextResponse.json({ ok: true });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 400 });
@@ -31,6 +33,7 @@ export async function DELETE(req: NextRequest) {
   if (username === user.username) return NextResponse.json({ error: 'Cannot remove yourself' }, { status: 400 });
   try {
     // Remove user implementation
+    const userStore = getUserStore();
     userStore.removeUser(username);
     return NextResponse.json({ ok: true });
   } catch (e: any) {

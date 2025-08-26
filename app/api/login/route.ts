@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { userStore } from '../../lib/userStore';
+import { getUserStore } from '@/lib/userStoreSingleton';
 import { makeSessionCookie } from '../../lib/cookieHelpers';
 
 export async function POST(req: NextRequest) {
@@ -7,6 +7,8 @@ export async function POST(req: NextRequest) {
   if (!username || !password) {
     return NextResponse.json({ error: 'Missing credentials' }, { status: 400 });
   }
+
+  const userStore = getUserStore();
   if (!userStore.authenticate(username, password)) {
     return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
   }

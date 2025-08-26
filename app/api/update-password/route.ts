@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { userStore } from '../../lib/userStore';
+import { getUserStore } from '@/lib/userStoreSingleton';
 import { getSessionUser } from '@/lib/sessionHelpers';
 
 export async function POST(req: NextRequest) {
@@ -11,6 +11,8 @@ export async function POST(req: NextRequest) {
   if (!oldPassword || !newPassword) {
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
   }
+
+  const userStore = getUserStore();
   if (!userStore.authenticate(session.username, oldPassword)) {
     return NextResponse.json({ error: 'Current password is incorrect' }, { status: 401 });
   }

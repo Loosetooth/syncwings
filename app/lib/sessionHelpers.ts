@@ -1,6 +1,6 @@
 
 import { NextRequest } from 'next/server';
-import { userStore } from './userStore';
+import { getUserStore } from '@/lib/userStoreSingleton';
 import { verifySessionJWT } from './jwtHelpers';
 
 export async function getSessionUser(req: NextRequest) {
@@ -15,7 +15,7 @@ export async function getSessionUser(req: NextRequest) {
   if (!token) return null;
   const payload = await verifySessionJWT(token);
   if (!payload || !payload.username) return null;
-  const user = userStore.getUserMap().get(payload.username);
+  const user = getUserStore().getUserMap().get(payload.username);
   if (!user) return null;
   return user;
 }

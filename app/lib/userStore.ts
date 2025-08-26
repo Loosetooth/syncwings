@@ -86,6 +86,7 @@ export class UserStore {
     userMap.set(username, { username, passwordHash, syncthingInstance: username, isAdmin: isFirstUser || isAdmin, index });
     this.writeUserMap(userMap);
     // --- Compose file and instance management ---
+    console.log(`Starting instance for new user ${username}`);
     this.instanceService.startInstance(username, index);
   }
 
@@ -140,6 +141,7 @@ export class UserStore {
   }
 
   async startAllInstances() {
+    console.log('Starting all instances for existing users');
     const users = this.readUsers();
     for (const user of users) {
       this.instanceService.startInstance(user.username, user.index);
@@ -152,21 +154,4 @@ export class UserStore {
       this.instanceService.stopComposeInstance(user.username);
     }
   }
-}
-
-export const userStore = new UserStore();
-
-// Start all instances on module load (when Next.js starts)
-userStore.startAllInstances();
-
-// Stop all instances on process exit
-if (typeof process !== 'undefined' && process.on) {
-  process.on('SIGINT', () => {
-    userStore.stopAllInstances();
-    process.exit(0);
-  });
-  process.on('SIGTERM', () => {
-    userStore.stopAllInstances();
-    process.exit(0);
-  });
 }
