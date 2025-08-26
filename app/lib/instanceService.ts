@@ -65,9 +65,9 @@ services:
       - ${userExternalDir}/data:/data
     ports:
       - 127.0.0.1:${webPort}:8384
-      - 127.0.0.1:${tcpPort}:${tcpPort}/tcp
-      - 127.0.0.1:${udpPort}:${udpPort}/udp
-      - 127.0.0.1:${discoveryPort}:${discoveryPort}/udp
+      - ${tcpPort}:${tcpPort}/tcp
+      - ${udpPort}:${udpPort}/udp
+      - ${discoveryPort}:${discoveryPort}/udp
     restart: unless-stopped
     `;
 
