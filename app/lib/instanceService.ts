@@ -105,7 +105,7 @@ services:
       xml = fs.readFileSync(configPath, 'utf8');
     } catch (error) {
       console.error(`Error reading ${configPath}:`, error);
-      // Just continue with empty xml
+      throw new Error(`Could not read config file for ${username}: ${configPath}`);
     }
     const parser = new XMLParser({ ignoreAttributes: false });
     const builder = new XMLBuilder({ ignoreAttributes: false, format: true });
@@ -186,7 +186,8 @@ services:
       secretKey = newConfig.general?.secret_key;
     } catch (error) {
       // If it doesn't exist after retries, we will create a new config
-      console.warn(`Filestash config file does not exist for ${username}, will create a new one.`);
+      console.error(`Filestash config file does not exist for user ${username}.`);
+      throw new Error(`Could not read config file for ${username}: ${configPath}`);
     }
 
     if (!secretKey) {
@@ -318,16 +319,28 @@ services:
   async startInstance(username: string, index: number) {
     this.ensureUserDirs(username);
     this.writeComposeFile(username, index);
+
     this.startComposeInstance(username);
-    const { updated } = await this.updateSyncthingConfig(username, index);
-    const { updated: fileStashUpdated } = await this.updateFileStashConfig(username, index);
-    if (updated || fileStashUpdated) {
-      console.log(`Syncthing or Filestash config updated for user ${username}. Restarting instance...`);
-      this.stopComposeInstance(username);
-      // Add a short delay to ensure container is fully stopped
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      this.startComposeInstance(username);
+
+    // Wait a bit to allow services to write or update their config files
+    await new Promise(resolve => setTimeout(resolve, 10_000));
+
+    // Stop the instance to safely update configs
+    this.stopComposeInstance(username);
+
+    try {
+      const { updated } = await this.updateSyncthingConfig(username, index);
+    } catch (error) {
+      console.error(`Failed to update Syncthing config for ${username}:`, error);
     }
+    try {
+      const { updated: fileStashUpdated } = await this.updateFileStashConfig(username, index);
+    } catch (error) {
+      console.error(`Failed to update Filestash config for ${username}:`, error);
+    }
+
+    // Start the instance after config updates
+    this.startComposeInstance(username);
   }
   stopInstance(username: string) {
     this.stopComposeInstance(username);
