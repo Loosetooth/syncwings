@@ -10,7 +10,8 @@ This project provides a simple web interface and backend for managing multiple [
 - User registration and login (file-based, no database required)
 - Each user is linked to a unique Syncthing instance
 - Admin can add or remove users
-- Optional [FileStash](https://www.filestash.app/) integration for file management 
+- Optional [FileStash](https://www.filestash.app/) integration for file management
+- AMD64 and ARM64 support
 
 ## Getting Started
 
