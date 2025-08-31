@@ -51,14 +51,19 @@ export class InstanceService {
 
     const fileStashUiPort = 8334 + index;
 
+    // Determine user and group IDs for container
+    // to match the host user running this process
+    const serverUserId = process.getuid() ? process.getuid() : 1000;
+    const serverGroupId = process.getgid() ? process.getgid() : 1000;
+
     const mainConfig = `
 services:
   syncthing:
     image: syncthing/syncthing:${syncthingContainerTag}
     container_name: syncthing_${username}
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=${serverUserId}
+      - PGID=${serverGroupId}
       - TZ=Etc/UTC
     volumes:
       - ${userExternalDir}/config:/var/syncthing/config
@@ -83,7 +88,7 @@ services:
     container_name: filestash_${username}
     image: ${filestashImage}
     restart: unless-stopped
-    user: "1000:1000"
+    user: "${serverUserId}:${serverGroupId}"
     environment:
       - APPLICATION_URL=
       - CANARY=true
