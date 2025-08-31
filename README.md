@@ -23,7 +23,7 @@ This project provides a simple web interface and backend for managing multiple [
 ```yaml
 services:
   syncthing-multi-user:
-    image: ghcr.io/loosetooth/syncthing-multi-user:latest
+    image: loosetooth/syncthing-multi-user:latest
     environment:
       # Set the data directory inside the container
       - DATA_DIR=/data
