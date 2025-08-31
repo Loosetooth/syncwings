@@ -135,6 +135,9 @@ This might result in slower sync speeds.
   - Set this to the local IP address of your server (e.g., `192.168.1.100`).
   - This needs to be set in combination with the above `EXPLICITLY_LISTEN_TO_LOCAL_IP` variable to ensure Syncthing listens on this IP address.
 
+- `MAX_USERS` (optional):
+  - Set this to limit the maximum number of users that can register. If not set, defaults to `10`.
+
 ## Usage
 
 ### Local Development

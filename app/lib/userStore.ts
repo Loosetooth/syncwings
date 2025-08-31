@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import bcrypt from 'bcryptjs';
 import { InstanceService } from './instanceService';
+import { getMaxUsers } from './constants';
 
 export interface User {
   username: string;
@@ -79,6 +80,7 @@ export class UserStore {
   addUser(username: string, password: string, isAdmin?: boolean): void {
     const userMap = this.getUserMap();
     if (userMap.has(username)) throw new Error('User exists');
+    if (userMap.size >= getMaxUsers()) throw new Error('Maximum number of users reached');
     const passwordHash = bcrypt.hashSync(password, 10);
     // First user is admin
     const isFirstUser = userMap.size === 0;

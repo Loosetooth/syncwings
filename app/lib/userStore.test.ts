@@ -1,8 +1,9 @@
-import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
+import { vi, describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 import { UserStore } from './userStore';
 import { InstanceService } from './instanceService';
+import * as constants from './constants';
 
 const TEST_DATA_DIR = path.join(process.cwd(), '__test_config');
 let store: UserStore;
@@ -13,6 +14,7 @@ function cleanTestConfig() {
 }
 
 describe('UserStore', () => {
+
   beforeAll(() => {
     const instanceService = new InstanceService(TEST_DATA_DIR, false);
     store = new UserStore(TEST_DATA_DIR, instanceService);
@@ -24,6 +26,26 @@ describe('UserStore', () => {
     fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
     store.reloadUsersFromDisk();
   })
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    cleanTestConfig();
+  });
+  it('should not allow more than MAX_USERS users (default 10)', () => {
+    for (let i = 0; i < 10; ++i) {
+      store.addUser('user' + i, 'pw');
+    }
+    expect(() => store.addUser('user10', 'pw')).toThrow(/maximum number of users/i);
+  });
+
+  it('should respect MAX_USERS from environment variable', () => {
+    vi.spyOn(constants, 'getMaxUsers').mockReturnValue(3);
+    store.writeUsers([]); // clear users
+    for (let i = 0; i < 3; ++i) {
+      store.addUser('envuser' + i, 'pw');
+    }
+    expect(() => store.addUser('envuser3', 'pw')).toThrow(/maximum number of users/i);
+  });
 
   afterEach(() => {
     cleanTestConfig();
