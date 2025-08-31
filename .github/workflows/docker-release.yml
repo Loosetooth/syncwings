@@ -29,22 +29,16 @@ jobs:
         run: |
           echo "TAG_NAME=${{ github.event.release.tag_name || inputs.tag_name }}" >> $GITHUB_ENV
 
-      - name: Build Docker image
-        run: |
-          REPO_NAME=$(basename "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          docker build -t docker.io/${{ secrets.DOCKERHUB_USERNAME }}/$REPO_NAME:${{ env.TAG_NAME }} .
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
-      - name: Push Docker image
-        run: |
-          REPO_NAME=$(basename "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/$REPO_NAME:${{ env.TAG_NAME }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Tag image as latest
+      - name: Build and push Docker image (multi-arch)
         run: |
           REPO_NAME=$(basename "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          docker tag docker.io/${{ secrets.DOCKERHUB_USERNAME }}/$REPO_NAME:${{ env.TAG_NAME }} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/$REPO_NAME:latest
-
-      - name: Push latest tag
-        run: |
-          REPO_NAME=$(basename "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/$REPO_NAME:latest
+          docker buildx build --platform linux/amd64,linux/arm64 \
+            -t docker.io/${{ secrets.DOCKERHUB_USERNAME }}/$REPO_NAME:${{ env.TAG_NAME }} \
+            -t docker.io/${{ secrets.DOCKERHUB_USERNAME }}/$REPO_NAME:latest \
+            --push .
