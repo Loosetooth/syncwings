@@ -54,8 +54,14 @@ This project provides a simple web interface and backend for managing multiple S
   - Defaults to `true` if not set.
 
 - `FILESTASH_CONTAINER_TAG` (optional):
-  - Set this to specify the tag/version of the File Stash container image used (default: `latest`).
+  - Set this to specify the tag/version of the File Stash container image used. If not set, the default `FILESTASH_CONTAINER_DIGEST` is used. (See below.)
   - The container used is [`machines/filestash`](https://hub.docker.com/r/machines/filestash).
+
+- `FILESTASH_CONTAINER_DIGEST` (optional):
+  - Set this to specify the digest of the File Stash container image used. This ensures that a specific, immutable version of the image is used.
+  - If not set, defaults to `sha256:29b785d6c7a362581c2254dcafbe91d76a20a73871a520dc85d7d970113bc965`.
+  - If both `FILESTASH_CONTAINER_TAG` and `FILESTASH_CONTAINER_DIGEST` are set, the digest will be used.
+  - Please include the `sha256:` prefix when setting this variable.
 
 - `EXPLICITLY_LISTEN_TO_LOCAL_IP` (optional):
   - Set this to `true` to have Syncthing explicitly listen on the local IP address specified in `LOCAL_IP_ADDRESS`.

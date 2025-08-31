@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
-import { fileStashContainerTag, syncthingContainerTag } from './constants';
+import { fileStashContainerDigest, fileStashContainerTag, syncthingContainerTag } from './constants';
 import { enableFileStash } from './constants.shared';
 import { waitForFileExists } from './awaitFileExists';
 import { updateSyncthingConfigString } from './syncthingConfig';
@@ -72,10 +72,16 @@ services:
     `;
 
     // If File Stash is enabled, add its configuration
+
+    // Prefer digest if available
+    const filestashImage = fileStashContainerDigest ?
+      // Digest should be in format sha256:...
+      `machines/filestash@${fileStashContainerDigest}` :
+      `machines/filestash:${fileStashContainerTag}`;
     const fileStashConfig = enableFileStash ? `
   filestash:
     container_name: filestash_${username}
-    image: machines/filestash:${fileStashContainerTag}
+    image: ${filestashImage}
     restart: unless-stopped
     user: "1000:1000"
     environment:
