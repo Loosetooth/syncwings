@@ -57,6 +57,16 @@ This project provides a simple web interface and backend for managing multiple S
   - Set this to specify the tag/version of the File Stash container image used (default: `latest`).
   - The container used is [`machines/filestash`](https://hub.docker.com/r/machines/filestash).
 
+- `EXPLICITLY_LISTEN_TO_LOCAL_IP` (optional):
+  - Set this to `true` to have Syncthing explicitly listen on the local IP address specified in `LOCAL_IP_ADDRESS`.
+  - This is useful for LAN discovery, which might not work properly when Syncthing is inside a Docker container. (See [this github issue](https://github.com/syncthing/syncthing/issues/1234https://github.com/syncthing/syncthing/issues/8445) for more context.)
+  - Needs to be set in combination with the `LOCAL_IP_ADDRESS` variable.
+  - Be aware that this pollutes the logs with periodic failure messages because the local ip cannot be bound to.
+
+- `LOCAL_IP_ADDRESS` (optional):
+  - Set this to the local IP address of your server (e.g., `192.168.1.100`).
+  - This needs to be set in combination with the above `EXPLICITLY_LISTEN_TO_LOCAL_IP` variable to ensure Syncthing listens on this IP address.
+
 ## Usage
 
 ### Local Development

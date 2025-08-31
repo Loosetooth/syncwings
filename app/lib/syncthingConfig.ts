@@ -1,4 +1,5 @@
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
+import { explicitlyListenToLocalIp, localIpAddress } from "./constants";
 
 /**
  * Update syncthing config.xml with required settings.
@@ -28,6 +29,16 @@ export const updateSyncthingConfigString = (originalConfigXml: string, username:
     `quic://0.0.0.0:${tcpPort}`,
     'dynamic+https://relays.syncthing.net/endpoint'
   ];
+
+  // Add local IP address if explicitly configured
+  if (explicitlyListenToLocalIp && localIpAddress) {
+    const localTcp = `tcp://${localIpAddress}:${tcpPort}`;
+    const localQuic = `quic://${localIpAddress}:${tcpPort}`;
+    listenAddresses.push(localTcp);
+    listenAddresses.push(localQuic);
+    console.log(`Adding local IP listen addresses: ${localTcp} and ${localQuic}`);
+  }
+
   // Check if all listen addresses are already present
   let currentAddresses = config.configuration.options.listenAddress;
   console.log('Current listen addresses:', currentAddresses);
