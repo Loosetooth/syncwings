@@ -42,6 +42,7 @@ services:
       # Mount the Docker socket to allow spawning Syncthing and FileStash containers
       - /var/run/docker.sock:/var/run/docker.sock
     # Set to UID:GID where GID matches the docker group on your host
+    # UID HAS TO BE "1000" because FileStash uses this UID internally
     user: "1000:131"
     restart: unless-stopped
     network_mode: host
