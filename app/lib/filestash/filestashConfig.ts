@@ -1,7 +1,13 @@
 import { decryptFilestashConfig, encryptFilestashConfig, generateFilestashSecretKey } from "./crypto";
 
 export type FileStashConfig = {
-  general?: { secret_key?: string };
+  general?: {
+    secret_key?: string
+    /**
+     * Upload chunk size in MB
+     */
+    upload_chunk_size?: number;
+  };
   connections?: { type: string; label: string }[];
   middleware?: {
     identity_provider?: { type: string; params?: string };
@@ -38,6 +44,9 @@ export const updateFilestashConfigString = (originalConfigString: string, userna
       label: 'local',
     },
   ];
+
+  // Set upload chunk size to 10MB
+  newConfig.general.upload_chunk_size = 10;
 
   // Middleware filestash configuration
   const idParamObj = { strategy: 'direct' };
