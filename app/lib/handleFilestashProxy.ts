@@ -34,7 +34,7 @@ export async function handleFilestashProxy(req: NextRequest): Promise<Response> 
       headers: { Location: '/filestash/' + url.search + url.hash },
     });
   }
-  
+
   // Build the path
   let subPath = url.pathname || '/';
   const targetUrl = `http://127.0.0.1:${port}${subPath}${url.search}`;
@@ -46,45 +46,59 @@ export async function handleFilestashProxy(req: NextRequest): Promise<Response> 
       method: req.method,
       headers,
     }, proxyRes => {
-      let body: Buffer[] = [];
-      proxyRes.on('data', chunk => body.push(chunk));
-      proxyRes.on('end', () => {
-        const status = proxyRes.statusCode || 200;
-        // Clone headers so we can safely mutate
-        const headers = { ...proxyRes.headers } as any;
-        // If 307 redirect, check Location header
-        // Make sure to adjust the path to include /filestash/ if it's a relative path
-        if (status == 307 && headers.location) {
-          try {
-            const loc = headers.location;
-            // Only adjust if it's a relative path (starts with /)
-            if (typeof loc === 'string' && loc.startsWith('/') && !loc.startsWith('/filestash/')) {
-              // Preserve query/hash if present
-              const urlObj = new URL(loc, 'http://dummy');
-              urlObj.pathname = '/filestash/' + urlObj.pathname.replace(/^\//, '');
-              headers.location = urlObj.pathname + urlObj.search + urlObj.hash;
-            }
-          } catch (e) {
-            // If Location is not a valid URL, skip modification
+      const status = proxyRes.statusCode || 200;
+      // Clone headers so we can safely mutate
+      const resHeaders = { ...proxyRes.headers } as any;
+      // If 307 redirect, check Location header
+      if (status == 307 && resHeaders.location) {
+        try {
+          const loc = resHeaders.location;
+          if (typeof loc === 'string' && loc.startsWith('/') && !loc.startsWith('/filestash/')) {
+            const urlObj = new URL(loc, 'http://dummy');
+            urlObj.pathname = '/filestash/' + urlObj.pathname.replace(/^\//, '');
+            resHeaders.location = urlObj.pathname + urlObj.search + urlObj.hash;
           }
+        } catch (e) {
+          // If Location is not a valid URL, skip modification
         }
-        const responseBody = (status === 204 || status === 304) ? undefined : Buffer.concat(body);
-        const res = new Response(responseBody, { status, headers });
-        resolve(res);
+      }
+
+      // Stream the 'download' response using a ReadableStream
+      const stream = new ReadableStream({
+        start(controller) {
+          proxyRes.on('data', (chunk) => controller.enqueue(new Uint8Array(chunk)));
+          proxyRes.on('end', () => controller.close());
+          proxyRes.on('error', (err) => controller.error(err));
+        }
       });
+      // For 204/304, no body
+      const responseBody = (status === 204 || status === 304) ? undefined : stream;
+      const res = new Response(responseBody, { status, headers: resHeaders });
+      resolve(res);
     });
     proxyReq.on('error', (err: Error) => {
       console.error('Proxy request error:', err);
-      const errorMsg = encodeURIComponent(`Proxy Error.
-        ${err.message}
-        Is the filestash instance started? Is there incorrect data saved in the session cookie?`);
+      const errorMsg = encodeURIComponent(`Proxy Error.\n${err.message}\nIs the filestash instance started? Is there incorrect data saved in the session cookie?`);
       resolve(new Response(null, {
         status: 302,
         headers: { Location: `/error?msg=${errorMsg}` },
       }));
     });
     // For methods with a body, pipe the body to the proxy request
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
+    if (req.method !== 'GET' && req.method !== 'HEAD' && req.body instanceof ReadableStream) {
+      const reader = req.body.getReader();
+      function pump() {
+        return reader.read().then(({ done, value }) => {
+          if (done) {
+            proxyReq.end();
+            return;
+          }
+          proxyReq.write(Buffer.from(value));
+          return pump();
+        });
+      }
+      pump().catch(() => proxyReq.end());
+    } else if (req.method !== 'GET' && req.method !== 'HEAD') {
       req.arrayBuffer().then(buf => {
         proxyReq.write(Buffer.from(buf));
         proxyReq.end();

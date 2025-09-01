@@ -56,28 +56,44 @@ export async function handleProxy(req: NextRequest): Promise<Response> {
       method: req.method,
       headers,
     }, proxyRes => {
-      let body: Buffer[] = [];
-      proxyRes.on('data', chunk => body.push(chunk));
-      proxyRes.on('end', () => {
-        const status = proxyRes.statusCode || 200;
-        const headers = proxyRes.headers as any;
-        const responseBody = (status === 204 || status === 304) ? undefined : Buffer.concat(body);
-        const res = new Response(responseBody, { status, headers });
-        resolve(res);
+      const status = proxyRes.statusCode || 200;
+      const resHeaders = { ...proxyRes.headers } as any;
+      // Stream the response using a ReadableStream
+      const stream = new ReadableStream({
+        start(controller) {
+          proxyRes.on('data', (chunk) => controller.enqueue(new Uint8Array(chunk)));
+          proxyRes.on('end', () => controller.close());
+          proxyRes.on('error', (err) => controller.error(err));
+        }
       });
+      // For 204/304, no body
+      const responseBody = (status === 204 || status === 304) ? undefined : stream;
+      const res = new Response(responseBody, { status, headers: resHeaders });
+      resolve(res);
     });
     proxyReq.on('error', (err: Error) => {
       console.error('Proxy request error:', err);
-      const errorMsg = encodeURIComponent(`Proxy Error.
-        ${err.message}
-        Is the syncthing instance started? Is there incorrect data saved in the session cookie?`);
+      const errorMsg = encodeURIComponent(`Proxy Error.\n${err.message}\nIs the syncthing instance started? Is there incorrect data saved in the session cookie?`);
       resolve(new Response(null, {
         status: 302,
         headers: { Location: `/error?msg=${errorMsg}` },
       }));
     });
     // For methods with a body, pipe the body to the proxy request
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
+    if (req.method !== 'GET' && req.method !== 'HEAD' && req.body instanceof ReadableStream) {
+      const reader = req.body.getReader();
+      function pump() {
+        return reader.read().then(({ done, value }) => {
+          if (done) {
+            proxyReq.end();
+            return;
+          }
+          proxyReq.write(Buffer.from(value));
+          return pump();
+        });
+      }
+      pump().catch(() => proxyReq.end());
+    } else if (req.method !== 'GET' && req.method !== 'HEAD') {
       req.arrayBuffer().then(buf => {
         proxyReq.write(Buffer.from(buf));
         proxyReq.end();
