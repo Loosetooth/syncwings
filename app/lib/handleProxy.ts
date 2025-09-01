@@ -61,9 +61,39 @@ export async function handleProxy(req: NextRequest): Promise<Response> {
       // Stream the response using a ReadableStream
       const stream = new ReadableStream({
         start(controller) {
-          proxyRes.on('data', (chunk) => controller.enqueue(new Uint8Array(chunk)));
-          proxyRes.on('end', () => controller.close());
-          proxyRes.on('error', (err) => controller.error(err));
+          let closed = false;
+          function safeEnqueue(chunk) {
+            if (!closed) {
+              try {
+                controller.enqueue(new Uint8Array(chunk));
+              } catch (e) {
+                // Ignore if controller is already closed/errored
+              }
+            }
+          }
+          function safeClose() {
+            if (!closed) {
+              closed = true;
+              try {
+                controller.close();
+              } catch (e) {
+                // Ignore if controller is already closed/errored
+              }
+            }
+          }
+          function safeError(err) {
+            if (!closed) {
+              closed = true;
+              try {
+                controller.error(err);
+              } catch (e) {
+                // Ignore if controller is already closed/errored
+              }
+            }
+          }
+          proxyRes.on('data', safeEnqueue);
+          proxyRes.on('end', safeClose);
+          proxyRes.on('error', safeError);
         }
       });
       // For 204/304, no body
