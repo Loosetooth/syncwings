@@ -4,6 +4,10 @@
   <img src="public/logo.svg" alt="Project Logo" height="120">
 </p>
 
+SyncWings lets you sync files between multiple devices and manage them easily through a web-based file manager. It combines [Syncthing](https://syncthing.net/) for secure, peer-to-peer file synchronization with [FileStash](https://www.filestash.app/) for convenient file browsing, downloading, renaming, and deleting—all from your browser.
+
+Whether for a single user or multiple users, SyncWings gives each user their own isolated Syncthing (and optional FileStash) instance, managed automatically via Docker Compose for easy deployment and strong separation between users.
+
 <p align="center">
   <strong>Demo:</strong> <a href="https://demo.syncwings.com">https://demo.syncwings.com</a><br/>
   <em>Feel free to use the demo to try things out. The demo instance is reset every hour.</em>
@@ -18,10 +22,6 @@
   Username: <code>user</code><br/>
   Password: <code>jR7balz*Bczs9#^FNSY3</code>
 </p>
-
-SyncWings lets you sync files between multiple devices and manage them easily through a web-based file manager. It combines [Syncthing](https://syncthing.net/) for secure, peer-to-peer file synchronization with [FileStash](https://www.filestash.app/) for convenient file browsing, downloading, renaming, and deleting—all from your browser.
-
-Whether for a single user or multiple users, SyncWings gives each user their own isolated Syncthing (and optional FileStash) instance, managed automatically via Docker Compose for easy deployment and strong separation between users.
 
 ## Advantages
 - Can be used for both single-user and multi-user setups. Even for single users, SyncWings is useful as it hosts both Syncthing and FileStash in one place.
