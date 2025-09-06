@@ -183,9 +183,9 @@ docker compose up
    chown 1000:999 ./data
    ```
    This ensures the app can write to the data directory without permission issues.
+3. The provided user ID (UID) must be `1000` because FileStash uses this UID internally.
 
 Adjust the compose file and permissions as needed for your environment.
-3. The provided user ID (UID) must be `1000` because FileStash uses this UID internally.
 
 ## Notes
 - This project is intended for Linux environments.
