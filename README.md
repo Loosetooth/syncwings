@@ -9,6 +9,16 @@
   <em>Feel free to use the demo to try things out. The demo instance is reset every hour.</em>
 </p>
 
+<p align="center">
+  <strong>Demo login details:</strong><br/>
+  <strong>Admin user:</strong><br/>
+  Username: <code>admin</code><br/>
+  Password: <code>R2r63&amp;^NqgEPTSf4#5pj</code><br/>
+  <strong>Regular user:</strong><br/>
+  Username: <code>user</code><br/>
+  Password: <code>jR7balz*Bczs9#^FNSY3</code>
+</p>
+
 This project provides a simple web interface and backend for managing multiple [Syncthing](https://syncthing.net/) (and optionally, [FileStash](https://www.filestash.app/)) instances, one per user. It is designed for small-scale, self-hosted setups where each user gets their own isolated Syncthing container, managed via Docker Compose.
 
 ## Features
