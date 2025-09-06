@@ -19,7 +19,14 @@
   Password: <code>jR7balz*Bczs9#^FNSY3</code>
 </p>
 
-This project provides a simple web interface and backend for managing multiple [Syncthing](https://syncthing.net/) (and optionally, [FileStash](https://www.filestash.app/)) instances, one per user. It is designed for small-scale, self-hosted setups where each user gets their own isolated Syncthing container, managed via Docker Compose.
+SyncWings lets you sync files between multiple devices and manage them easily through a web-based file manager. It combines [Syncthing](https://syncthing.net/) for secure, peer-to-peer file synchronization with [FileStash](https://www.filestash.app/) for convenient file browsing, downloading, renaming, and deleting—all from your browser.
+
+Whether for a single user or multiple users, SyncWings gives each user their own isolated Syncthing (and optional FileStash) instance, managed automatically via Docker Compose for easy deployment and strong separation between users.
+
+## Advantages
+- Can be used for both single-user and multi-user setups. Even for single users, SyncWings is useful as it hosts both Syncthing and FileStash in one place.
+- FileStash integration allows downloading individual files (which is not possible with Syncthing alone).
+- FileStash also enables file management features such as renaming, deleting, and organizing files directly from the web interface. These changes are then propagated to other devices via Syncthing.
 
 ## Features
 - User registration and login (file-based, no database required)
@@ -205,7 +212,3 @@ Adjust the compose file and permissions as needed for your environment.
 ## Notes
 - This project is intended for Linux environments.
 - All user data is stored in a single JSON file for simplicity.
-
----
-
-Feel free to modify or extend for your own use case!
