@@ -185,10 +185,11 @@ docker compose up
    This ensures the app can write to the data directory without permission issues.
 
 Adjust the compose file and permissions as needed for your environment.
+3. The provided user ID (UID) must be `1000` because FileStash uses this UID internally.
 
 ## Notes
 - This project is intended for Linux environments.
-- All user adata is stored in a single JSON file for simplicity.
+- All user data is stored in a single JSON file for simplicity.
 
 ---
 
