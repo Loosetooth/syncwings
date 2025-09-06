@@ -1,7 +1,12 @@
-# SyncWings
+<h1 align="center">SyncWings</h1>
 
 <p align="center">
   <img src="public/logo.svg" alt="Project Logo" height="120">
+</p>
+
+<p align="center">
+  <strong>Demo:</strong> <a href="https://demo.syncwings.com">https://demo.syncwings.com</a><br/>
+  <em>Feel free to use the demo to try things out. The demo instance is reset every hour.</em>
 </p>
 
 This project provides a simple web interface and backend for managing multiple [Syncthing](https://syncthing.net/) (and optionally, [FileStash](https://www.filestash.app/)) instances, one per user. It is designed for small-scale, self-hosted setups where each user gets their own isolated Syncthing container, managed via Docker Compose.
