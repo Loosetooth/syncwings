@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
-import { fileStashContainerDigest, fileStashContainerTag, syncthingContainerTag } from './constants';
+import { enableIpv6, fileStashContainerDigest, fileStashContainerTag, syncthingContainerTag } from './constants';
 import { enableFileStash } from './constants.shared';
 import { waitForFileExists } from './awaitFileExists';
 import { updateSyncthingConfigString } from './syncthingConfig';
@@ -56,7 +56,7 @@ export class InstanceService {
     const serverUserId = process.getuid() ? process.getuid() : 1000;
     const serverGroupId = process.getgid() ? process.getgid() : 1000;
 
-    const mainConfig = `
+    const services = `
 services:
   syncthing:
     image: syncthing/syncthing:${syncthingContainerTag}
@@ -74,7 +74,7 @@ services:
       - ${udpPort}:${udpPort}/udp
       - ${discoveryPort}:${discoveryPort}/udp
     restart: unless-stopped
-    `;
+`;
 
     // If File Stash is enabled, add its configuration
 
@@ -100,8 +100,13 @@ services:
       - ${userExternalDir}/data:/app/userdata
 ` : '';
 
+    const networks = enableIpv6 ? `
+networks:
+  default:
+    enable_ipv6: true
+` : '';
 
-    return mainConfig + fileStashConfig;
+    return services + fileStashConfig + networks;
   }
 
   async updateSyncthingConfig(username: string, index: number) {

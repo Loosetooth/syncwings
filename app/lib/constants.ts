@@ -8,6 +8,7 @@ export const fileStashContainerDigest = process.env.FILESTASH_CONTAINER_DIGEST |
 export const fileStashContainerTag = process.env.FILESTASH_CONTAINER_TAG || 'latest';
 export const localIpAddress = process.env.LOCAL_IP_ADDRESS || '';
 export const explicitlyListenToLocalIp = process.env.EXPLICITLY_LISTEN_TO_LOCAL_IP === 'true';
+export const enableIpv6 = process.env.ENABLE_IPV6 === 'true';
 
 export function getMaxUsers(): number {
   return process.env.MAX_USERS ? parseInt(process.env.MAX_USERS, 10) : 10;

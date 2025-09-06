@@ -140,6 +140,11 @@ This might result in slower sync speeds.
 - `MAX_USERS` (optional):
   - Set this to limit the maximum number of users that can register. If not set, defaults to `10`.
 
+- `ENABLE_IPV6` (optional):
+  - Set this to `true` to enable IPv6 support in the generated Docker Compose files.
+  - Defaults to `false`.
+  - For IPv6 support to work, it needs to be enabled for the default bridge network in Docker. To enable this, follow the official Docker documentation: [Use IPv6 for the default bridge network](https://docs.docker.com/engine/daemon/ipv6/#use-ipv6-for-the-default-bridge-network).
+
 ## Usage
 
 ### Local Development
