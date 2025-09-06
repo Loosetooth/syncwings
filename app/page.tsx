@@ -15,7 +15,7 @@ export default function Page() {
       <>
         <Navbar />
         <main className="max-w-2xl mx-auto px-4 py-10">
-          <h1 className="text-3xl font-bold mb-4 text-center">Syncthing Multi-User Manager</h1>
+          <h1 className="text-3xl font-bold mb-4 text-center">SyncWings</h1>
           <div className="text-center text-gray-600 text-lg">Loading...</div>
         </main>
       </>
@@ -29,7 +29,7 @@ export default function Page() {
     <>
       <Navbar />
       <main className="max-w-2xl mx-auto px-4 py-10">
-        <h1 className="text-3xl font-bold mb-4 text-center">Syncthing Multi-User Manager</h1>
+        <h1 className="text-3xl font-bold mb-4 text-center">SyncWings</h1>
         <p className="text-lg text-gray-700 mb-8 text-center">
           This app provides a simple web interface for managing multiple Syncthing instances, one per user. Each user gets their own isolated Syncthing container, managed via Docker Compose. Register, log in, and manage your own file sync instance.
         </p>

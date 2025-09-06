@@ -1,5 +1,5 @@
 {
-  "name": "syncthing-multi-user",
+  "name": "syncwings",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,8 +11,7 @@
     "test": "vitest"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Loosetooth <loosetooth@protonmail.com>",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",

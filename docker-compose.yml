@@ -1,7 +1,7 @@
 
 services:
-  syncthing-multi-user:
-    image: loosetooth/syncthing-multi-user:latest
+  syncwings:
+    image: loosetooth/syncwings:latest
     environment:
       # Secret for JWT signing.
       # Generate with `openssl rand -base64 64` and remove the newline

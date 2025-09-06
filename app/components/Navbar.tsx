@@ -43,7 +43,7 @@ export default function Navbar() {
       <div className="flex-1 flex items-center gap-2">
         <Link href="/" className="flex items-center group" aria-label="Home">
           <Image src="/logo.svg" alt="Logo" width={36} height={36} priority className="mr-2" />
-          <span className="font-bold text-lg text-gray-800 hover:text-primary text-center">Syncthing Multi-User</span>
+          <span className="font-bold text-lg text-gray-800 hover:text-primary text-center">SyncWings</span>
         </Link>
       </div>
       {/* Only show links and menu if not loading */}

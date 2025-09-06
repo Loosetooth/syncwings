@@ -1,4 +1,4 @@
-# Syncthing Multi-User
+# SyncWings
 
 <p align="center">
   <img src="public/logo.svg" alt="Project Logo" height="120">
@@ -23,14 +23,14 @@ This project provides a simple web interface and backend for managing multiple [
 
 ```yaml
 services:
-  syncthing-multi-user:
-    image: loosetooth/syncthing-multi-user:latest
+  syncwings:
+    image: loosetooth/syncwings:latest
     environment:
       # Set the data directory inside the container
       - DATA_DIR=/data
       # Set the external data directory (adjust this path as needed)
       # This has to be equal to the bind mount for the DATA_DIR in the volumes section below
-      - DATA_DIR_EXTERNAL=/path/to/large/disk/syncthing-multi-user/data
+      - DATA_DIR_EXTERNAL=/path/to/large/disk/syncwings/data
       # Optionally set the port for the Next.js app (default: 3000)
       - PORT=3001
       # Set the session secret from the .env file
@@ -38,7 +38,7 @@ services:
     # The ./data directory must be created and owned by the same UID:GID as set below
     volumes:
       # The host path should be the same as DATA_DIR_EXTERNAL
-      - /path/to/large/disk/syncthing-multi-user/data:/data
+      - /path/to/large/disk/syncwings/data:/data
       # Mount the Docker socket to allow spawning Syncthing and FileStash containers
       - /var/run/docker.sock:/var/run/docker.sock
     # Set to UID:GID where GID matches the docker group on your host
@@ -49,7 +49,7 @@ services:
 ```
 
 Place the above `docker-compose.yml` in a directory on your server.
-Adjust `/path/to/large/disk/syncthing-multi-user/data` to a suitable location on your host with enough space for user data.
+Adjust `/path/to/large/disk/syncwings/data` to a suitable location on your host with enough space for user data.
 Currently, all user data, including Syncthing's `config` folder and database files, are stored in this directory.
 
 ### Secret Generation
@@ -78,7 +78,7 @@ The first user to register will be an administrator by default.
 
 1. Set up a [reverse proxy](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/) on your webserver (e.g., Nginx, Apache, Caddy) to handle HTTPS and domain routing.
 2. Configure firewall rules and/or Port Forwarding to allow:
-   - accessing the syncthing-multi-user UI
+   - accessing the SyncWings UI
    - allow Syncthing instances to create direct connections
 
 #### Port ranges
@@ -102,7 +102,7 @@ This might result in slower sync speeds.
 
 - `DATA_DIR_EXTERNAL` (recommended for Docker Compose):
   - Set this to specify the absolute host path for user Syncthing data and config directories when generating Docker Compose files.
-  - Ensures that Syncthing containers mount user data/config from a fixed location on the host (e.g., `/opt/syncthing-multiuser-data`).
+  - Ensures that Syncthing containers mount user data/config from a fixed location on the host (e.g., `/opt/syncwings-data`).
   - If not set, defaults to `DATA_DIR` if it is set, otherwise falls back to `/data`.
 
 - `SYNCTHING_CONTAINER_TAG` (optional):
@@ -161,7 +161,7 @@ This might result in slower sync speeds.
 ### Docker
 To build the Docker image:
 ```sh
-docker build -t syncthing-multi-user .
+docker build -t syncwings .
 ```
 
 To run the app using Docker Compose, use the provided `docker-compose.yml` as an example:
