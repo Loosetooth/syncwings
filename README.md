@@ -93,7 +93,7 @@ From the directory containing your `docker-compose.yml` and `.env` file, run:
 docker compose up -d
 ```
 
-The app will be available at `http://localhost:3000` (or the port you specified in the `PORT` environment variable).
+The app will be available at `http://localhost:3001` (or the port you specified in the `PORT` environment variable, defaults to `3000` if `PORT` is not set).
 The first user to register will be an administrator by default.
 
 ### Next Steps
