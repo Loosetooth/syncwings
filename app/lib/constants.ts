@@ -1,5 +1,5 @@
 
-export const syncthingContainerTag = process.env.SYNCTHING_CONTAINER_TAG || '2.0.3';
+export const syncthingContainerTag = process.env.SYNCTHING_CONTAINER_TAG || '2.1.7';
 
 const isFileStashTagSpecified = !!process.env.FILESTASH_CONTAINER_TAG;
 export const fileStashContainerDigest = process.env.FILESTASH_CONTAINER_DIGEST ||

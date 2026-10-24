@@ -128,7 +128,7 @@ This might result in slower sync speeds.
   - If not set, defaults to `DATA_DIR` if it is set, otherwise falls back to `/data`.
 
 - `SYNCTHING_CONTAINER_TAG` (optional):
-  - Set this to specify the tag/version of the Syncthing container image used for each user instance (default: `2.0.1`).
+  - Set this to specify the tag/version of the Syncthing container image used for each user instance (default: `2.1.7`).
   - The container used is [`syncthing/syncthing`](https://hub.docker.com/r/syncthing/syncthing).
 
 - `PORT` (optional):

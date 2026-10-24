@@ -1,6 +1,8 @@
 # syntax=docker.io/docker/dockerfile:1
 
-FROM node:20-bookworm-slim AS base
+FROM node:26-bookworm-slim AS base
+# Node 25+ no longer bundles corepack
+RUN npm install -g corepack@0.36.0
 
 # Install dependencies only when needed
 FROM base AS deps
